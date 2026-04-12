@@ -4,6 +4,10 @@
 #
 
 import sys
-sys.path[:] = [ path for path in sys.path if path ]
+sys.path[:] = [path for path in sys.path if path]
+
+# Add flake8 fixes/suppression - easy fix -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
+
 from cs.distinfo import main
 sys.exit(main(sys.argv))
