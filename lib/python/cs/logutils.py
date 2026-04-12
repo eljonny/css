@@ -43,6 +43,9 @@ Basic logging from anywhere:
         error("nastiness found! bad value=%r", bad_value)
 '''
 
+# Add flake8 fixes - easy fixes, remove unused imports -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
+
 from __future__ import with_statement
 import codecs
 from contextlib import contextmanager
@@ -54,7 +57,6 @@ import logging
 from logging import Formatter, StreamHandler
 import os
 import os.path
-from pprint import pformat
 import stat
 import sys
 from threading import Lock
@@ -68,7 +70,6 @@ from cs.deco import fmtdoc, logging_wrapper, verbose as v, vv
 from cs.lex import is_dotted_identifier
 import cs.pfx
 from cs.pfx import Pfx, XP
-from cs.py.func import funccite
 
 __version__ = '20260912-post'
 
@@ -114,6 +115,7 @@ assert (
 loginfo = None
 D_mode = False
 
+
 def ifdebug():
   ''' Test the `loginfo.level` against `logging.DEBUG`.
   '''
@@ -121,6 +123,7 @@ def ifdebug():
   if loginfo is None:
     loginfo = setup_logging()
   return loginfo.level is not None and loginfo.level <= logging.DEBUG
+
 
 class LoggingState(NS):
   ''' A logging setup arranged for conventional UNIX command line use.
@@ -224,12 +227,12 @@ class LoggingState(NS):
       fd = main_log.fileno()
     except (AttributeError, IOError):
       is_fifo = False
-      ##is_reg = False                        # unused
+      # is_reg = False                        # unused
       is_tty = False
     else:
       st = os.fstat(fd)
       is_fifo = stat.S_ISFIFO(st.st_mode)
-      ##is_reg = stat.S_ISREG(st.st_mode)     # unused
+      # is_reg = stat.S_ISREG(st.st_mode)     # unused
       is_tty = stat.S_ISCHR(st.st_mode)
 
     if getattr(main_log, 'encoding', None) is None:
@@ -323,6 +326,7 @@ class LoggingState(NS):
 
       signal.signal(signal.SIGHUP, handler)
 
+
 def setup_logging(cmd_name=None, **kw):
   ''' Prepare a `LoggingState` and return it.
       It is also available as the global `cs.logutils.loginfo`.
@@ -339,6 +343,7 @@ def setup_logging(cmd_name=None, **kw):
     # just amend the current LoggingState
     loginfo.__dict__.update(**kw)
   return loginfo
+
 
 class PfxFormatter(Formatter):
   ''' A Formatter subclass that has access to the program's `cmd` and `Pfx` state.
@@ -396,8 +401,8 @@ class PfxFormatter(Formatter):
         ''' Call the former `formatter.format` method
             and prepend the current `Pfx` prefix to the start.
         '''
-        ##msg0 = record.msg
-        ##args0 = record.args
+        # msg0 = record.msg
+        # args0 = record.args
         cur_pfx = Pfx._state.prefix
         if not cur_pfx:
           return old_format(record)
@@ -420,6 +425,7 @@ class PfxFormatter(Formatter):
 
       formatter.format = new_format
       formatter.PfxFormatter__monkey_patched = True
+
 
 # pylint: disable=too-many-branches,too-many-statements,redefined-outer-name
 def infer_logging_level(env_debug=None, environ=None, verbose=None):
@@ -500,6 +506,7 @@ def infer_logging_level(env_debug=None, environ=None, verbose=None):
       flags=flags,
   )
 
+
 def D(msg, *args):
   ''' Print formatted debug string straight to `sys.stderr` if
       `D_mode` is true, bypassing the logging modules entirely.
@@ -509,6 +516,7 @@ def D(msg, *args):
   global D_mode
   if D_mode:
     XP(msg, *args)
+
 
 # pylint: disable=too-many-arguments,redefined-builtin
 def add_logfile(
@@ -547,7 +555,9 @@ def add_logfile(
   logger.addHandler(handler)
   return logger, handler
 
+
 logTo = add_logfile
+
 
 @contextmanager
 def with_log(filename, **kw):
@@ -559,6 +569,7 @@ def with_log(filename, **kw):
   finally:
     logger.removeHandler(handler)
 
+
 class NullHandler(logging.Handler):
   ''' A `Handler` which discards its requests.
   '''
@@ -567,7 +578,9 @@ class NullHandler(logging.Handler):
     ''' Discard the log record.
     '''
 
+
 __logExLock = Lock()
+
 
 def logException(exc_type, exc_value, exc_tb):
   ''' Replacement for `sys.excepthook` that reports via the `cs.logutils`
@@ -581,11 +594,13 @@ def logException(exc_type, exc_value, exc_tb):
       exception("EXCEPTION> " + line)
     sys.excepthook = curhook
 
+
 # Logger public functions
 def exception(msg, *args, **kwargs):
   ''' Emit an exception log with the current `Pfx` prefix.
   '''
   Pfx._state.cur.exception(msg, *args, **kwargs)
+
 
 @logging_wrapper
 def log(level, msg, *args, **kwargs):
@@ -593,11 +608,13 @@ def log(level, msg, *args, **kwargs):
   '''
   Pfx._state.cur.log(level, msg, *args, **kwargs)
 
+
 @logging_wrapper(stacklevel_increment=1)
 def debug(msg, *args, **kwargs):
   ''' Emit a log at `logging.DEBUG` level with the current `Pfx` prefix.
   '''
   log(logging.DEBUG, msg, *args, **kwargs)
+
 
 @logging_wrapper(stacklevel_increment=1)
 def info(msg, *args, **kwargs):
@@ -605,11 +622,13 @@ def info(msg, *args, **kwargs):
   '''
   log(logging.INFO, msg, *args, **kwargs)
 
+
 @logging_wrapper(stacklevel_increment=1)
 def status(msg, *args, **kwargs):
   ''' Emit a log at `STATUS` level with the current `Pfx` prefix.
   '''
   log(STATUS, msg, *args, **kwargs)
+
 
 @logging_wrapper(stacklevel_increment=1)
 def track(msg, *args, **kwargs):
@@ -617,17 +636,20 @@ def track(msg, *args, **kwargs):
   '''
   log(TRACK, msg, *args, **kwargs)
 
+
 @logging_wrapper(stacklevel_increment=1)
 def quiet(msg, *args, **kwargs):
   ''' Emit a log at `QUIET` level with the current `Pfx` prefix.
   '''
   log(QUIET, msg, *args, **kwargs)
 
+
 @logging_wrapper(stacklevel_increment=1)
 def verbose(msg, *args, **kwargs):
   ''' Emit a log at `VERBOSE` level with the current `Pfx` prefix.
   '''
   log(VERBOSE, msg, *args, **kwargs)
+
 
 @logging_wrapper(stacklevel_increment=1)
 def ifverbose(is_verbose, msg, *args, **kwargs):
@@ -642,6 +664,7 @@ def ifverbose(is_verbose, msg, *args, **kwargs):
   elif is_verbose:
     # emit at INFO level
     info(msg, *args, **kwargs)
+
 
 @logging_wrapper(stacklevel_increment=1)
 def warning(msg, *args, **kwargs):
@@ -658,17 +681,20 @@ def error(msg, *args, **kwargs):
   '''
   log(logging.ERROR, msg, *args, **kwargs)
 
+
 @logging_wrapper(stacklevel_increment=1)
 def critical(msg, *args, **kwargs):
   ''' Emit a log at `logging.CRITICAL` level with the current `Pfx` prefix.
   '''
   log(logging.CRITICAL, msg, *args, **kwargs)
 
+
 @logging_wrapper(stacklevel_increment=1)
 def trace(msg, *args, **kwargs):
   ''' Emit a log message at `loginfo.trace_level` with the current `Pfx` prefix.
   '''
   log(loginfo.trace_level, msg, *args, **kwargs)
+
 
 @logging_wrapper(stacklevel_increment=1)
 def upd(msg, *args, **kwargs):
@@ -684,6 +710,7 @@ def upd(msg, *args, **kwargs):
     _upd.out(msg, *args)
   else:
     info(msg, *args, **kwargs)
+
 
 # pylint: disable=too-many-instance-attributes
 class LogTime(object):
@@ -738,6 +765,7 @@ class LogTime(object):
         tag = tag % self.tag_args
       log(level, "%s: ELAPSED %5.3fs" % (tag, elapsed))
     return False
+
 
 class UpdHandler(StreamHandler):
   ''' A `StreamHandler` subclass whose `.emit` method
@@ -802,6 +830,7 @@ class UpdHandler(StreamHandler):
     ''' Flush the update status.
     '''
     return self.upd.flush()
+
 
 if __name__ == '__main__':
 

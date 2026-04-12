@@ -3,6 +3,9 @@
 ''' Assorted context managers.
 '''
 
+# Add flake8 fixes - easy fixes -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
+
 from contextlib import contextmanager
 try:
   from contextlib import nullcontext  # pylint: disable=unused-import,ungrouped-imports
@@ -32,6 +35,7 @@ DISTINFO = {
     ],
     'install_requires': ['cs.deco', 'cs.gimmicks'],
 }
+
 
 @contextmanager
 def contextif(cmgr, *cmgr_args, **cmgr_kwargs):
@@ -118,6 +122,7 @@ def contextif(cmgr, *cmgr_args, **cmgr_kwargs):
   else:
     yield
 
+
 def pushattrs(o, **attr_values):
   ''' The "push" part of `stackattrs`.
       Push `attr_values` onto `o` as attributes,
@@ -137,6 +142,7 @@ def pushattrs(o, **attr_values):
     setattr(o, attr, value)
   return old_values
 
+
 def popattrs(o, attr_names, old_values):
   ''' The "pop" part of `stackattrs`.
       Restore previous attributes of `o`
@@ -155,6 +161,7 @@ def popattrs(o, attr_names, old_values):
         pass
     else:
       setattr(o, attr, old_value)
+
 
 @contextmanager
 def stackattrs(o, **attr_values):
@@ -228,6 +235,7 @@ def stackattrs(o, **attr_values):
   finally:
     popattrs(o, attr_values.keys(), old_values)
 
+
 def pushkeys(d, kv=None, **kw):
   ''' The "push" part of `stackkeys`.
       Use the mapping provided as `kv` or `kw` to update `d`.
@@ -251,6 +259,7 @@ def pushkeys(d, kv=None, **kw):
     d[key] = value
   return old_values
 
+
 def popkeys(d, key_names, old_values):
   ''' The "pop" part of `stackkeys`.
       Restore previous key values of `d`
@@ -269,6 +278,7 @@ def popkeys(d, key_names, old_values):
         pass
     else:
       d[key] = old_value
+
 
 @contextmanager
 def stackkeys(d, kv=None, **kw):
@@ -323,6 +333,7 @@ def stackkeys(d, kv=None, **kw):
   finally:
     popkeys(d, kv.keys(), old_values)
 
+
 @contextmanager
 def stackset(s, element, lock=None):
   ''' Context manager to add `element` to the set `s` and remove it on return.
@@ -344,6 +355,7 @@ def stackset(s, element, lock=None):
           s.remove(element)
       else:
         s.remove(element)
+
 
 def twostep(cmgr):
   ''' Return a generator which operates the context manager `cmgr`.
@@ -407,6 +419,7 @@ def twostep(cmgr):
   with cmgr as enter:
     yield enter
   yield
+
 
 def setup_cmgr(cmgr):
   ''' Run the enter phase of the context manager `cmgr`.
@@ -472,6 +485,7 @@ def setup_cmgr(cmgr):
 
   return enter_value, next2
 
+
 def push_cmgr(o, attr, cmgr):
   ''' A convenience wrapper for `twostep(cmgr)`
       to run the `__enter__` phase of `cmgr` and save its value as `o.`*attr*`.
@@ -521,6 +535,7 @@ def push_cmgr(o, attr, cmgr):
   pushed = pushattrs(o, **{attr: enter_value, pop_func_attr: pop_func})
   return enter_value
 
+
 def pop_cmgr(o, attr):
   ''' Run the `__exit__` phase of a context manager commenced with `push_cmgr`.
       Restore `attr` as it was before `push_cmgr`.
@@ -528,6 +543,7 @@ def pop_cmgr(o, attr):
   '''
   pop_func = getattr(o, '_push_cmgr__popfunc__' + attr)
   return pop_func()
+
 
 @contextmanager
 def stack_signals(signums, handler, additional=False):
@@ -558,6 +574,7 @@ def stack_signals(signums, handler, additional=False):
   finally:
     for signum, old_handler in stacked_signals.items():
       signal.signal(signum, old_handler)
+
 
 class ContextManagerMixin:
   ''' A mixin to provide context manager `__enter__` and `__exit__` methods
@@ -693,6 +710,7 @@ class ContextManagerMixin:
       except StopIteration:
         pass
 
+
 def withif(obj):
   ''' Return a context manager for `obj`.
       If `obj` has an `__enter__` attribute, return `obj`
@@ -706,6 +724,7 @@ def withif(obj):
   if hasattr(obj, '__enter__'):
     return obj
   return nullcontext()
+
 
 @decorator
 def with_self(method, get_context_from_self=None):
@@ -724,6 +743,7 @@ def with_self(method, get_context_from_self=None):
 
   return with_self_wrapper
 
+
 def _withall(obj_it):
   ''' A generator to enter every object `obj` from the iterator
       `obj_it` using `with obj:`, then yield.
@@ -735,6 +755,7 @@ def _withall(obj_it):
   else:
     with obj:
       yield from _withall(obj_it)
+
 
 @contextmanager
 def withall(*objs):
@@ -751,6 +772,7 @@ def withall(*objs):
   '''
   yield from _withall(obj for obj in objs if obj is not None)
 
+
 def closeall(objs: Iterable) -> Callable:
   ''' Enter all the objects from `objs` using `with`
       and return a function to close them all.
@@ -763,6 +785,7 @@ def closeall(objs: Iterable) -> Callable:
   cmgr_it = twostep(withall(objs))
   next(cmgr_it)
   return partial(next, cmgr_it)
+
 
 @contextmanager
 def reconfigure_file(f, **kw):

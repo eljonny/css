@@ -12,6 +12,9 @@ As of Python 3.3 the function `shlex.quote()` does what `quotestr()` does.
 As of Python 3.8 the function `shlex.join()` does what `quoteargv()` does.
 '''
 
+# Add flake8 fixes - easy fixes -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
+
 import string
 import sys
 
@@ -37,6 +40,7 @@ DISTINFO = {
 # characters than do not need to be quoted
 SAFECHARS = string.digits + string.ascii_letters + '-+_.,/:'
 
+
 def quote(args):
   ''' Quote the supplied strings, return a list of the quoted strings.
 
@@ -45,6 +49,7 @@ def quote(args):
       i.e. join the resulting strings together.
   '''
   return [quotestr(s) for s in args]
+
 
 def quotestr(s):
   ''' Quote a string for use on a shell command line.
@@ -118,10 +123,12 @@ def quotestr(s):
   flush()
   return ''.join(qparts)
 
+
 def quoteargv(argv):
   ''' Quote strings, assemble into command string.
   '''
   return ' '.join(quote(argv))
+
 
 def main_shqstr(argv=None):
   ''' shqstr: emit shell-quoted form of the command line arguments.
@@ -130,6 +137,7 @@ def main_shqstr(argv=None):
     argv = sys.argv
   argv.pop(0)
   print(quoteargv(argv))
+
 
 if __name__ == '__main__':
   sys.exit(main_shqstr())

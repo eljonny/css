@@ -4,6 +4,10 @@
 #       - Cameron Simpson <cs@cskk.id.au>
 #
 
+# Add flake8 fixes, fix error -
+# easy fixes, fix broken names, remove unused imports -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
+
 from __future__ import print_function, absolute_import
 import sys
 from io import StringIO
@@ -11,19 +15,17 @@ import os
 import os.path
 import errno
 from threading import Lock
-import time
 import unittest
 from tempfile import NamedTemporaryFile
 from .fileutils import compare, rewrite, rewrite_cmgr, Pathname, \
-                        file_property, \
-                        make_files_property, \
-                        BackedFile, BackedFile_TestMethods
-from .gimmicks import TimeoutError
+    files_property, \
+    make_files_property, \
+    BackedFile, BackedFile_TestMethods
 from .timeutils import sleep
-from .x import X
+
 
 class ThingWithFileProperty(object):
-  ''' An object with an `@file_property`.
+  ''' An object with an `@files_property`.
   '''
 
   def __init__(self):
@@ -40,11 +42,12 @@ class ThingWithFileProperty(object):
     with open(self._test2__filename, "w") as fp:
       fp.write(data)
 
-  @file_property
+  @files_property
   def test1(self, filename):
     with open(filename) as fp:
       data = fp.read()
     return data
+
 
 class ThingWithFilesProperty(object):
   ''' An object with an `@files_property`.
@@ -62,17 +65,18 @@ class ThingWithFilesProperty(object):
     with open(self._test2s[0], "w") as fp:
       fp.write(data)
 
-  ##@files_property
-  ##def test1(self, path0):
-  ##  with open(path0) as fp:
-  ##    data = fp.read()
-  ##  return (path0,), data
+  # @files_property
+  # def test1(self, path0):
+  #   with open(path0) as fp:
+  #     data = fp.read()
+  #   return (path0,), data
 
   @make_files_property(poll_rate=0.3)
   def test2(self, paths):
     with open(paths[0]) as fp:
       data = fp.read()
     return (paths[0],), data
+
 
 class Test_Misc(unittest.TestCase):
   ''' Tests.
@@ -149,7 +153,7 @@ class Test_Misc(unittest.TestCase):
         t1data = t1fp.read()
       self.assertEqual(t1data, newdata, "bad new data in %s" % (T1.name,))
 
-  def test_file_property_00(self):
+  def test_files_property_00(self):
     PC = self.fileprop = ThingWithFileProperty()
     self.assertTrue(not os.path.exists(PC._test1__filename))
     data1 = PC.test1
@@ -188,8 +192,8 @@ class Test_Misc(unittest.TestCase):
   def _eq(self, a, b, opdesc):
     ''' Convenience wrapper for assertEqual.
     '''
-    ##if a == b:
-    ##  print("OK: %s: %r == %r" % (opdesc, a, b), file=sys.stderr)
+    # if a == b:
+    #   print("OK: %s: %r == %r" % (opdesc, a, b), file=sys.stderr)
     self.assertEqual(a, b, "%s: got %r, expected %r" % (opdesc, a, b))
 
   def test_Pathname_01_attrs(self):
@@ -222,6 +226,7 @@ class Test_Misc(unittest.TestCase):
       ):
         self._eq(format(P, spec), expected, "format(%r, %r)" % (P, spec))
 
+
 class Test_BackedFile(unittest.TestCase, BackedFile_TestMethods):
   ''' tests for `BackedFile`.
   '''
@@ -238,8 +243,10 @@ class Test_BackedFile(unittest.TestCase, BackedFile_TestMethods):
     self.backed_fp.close()
     self.backing_fp.close()
 
+
 def selftest(argv):
   unittest.main(__name__, None, argv, failfast=True)
+
 
 if __name__ == '__main__':
   selftest(sys.argv)

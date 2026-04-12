@@ -12,6 +12,9 @@ will consume some or all of the derived iterator
 in the course of its function.
 '''
 
+# Add flake8 fixes - easy fixes; suppress E731 where appropriate -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
+
 from builtins import range as builtin_range
 from heapq import heappop, heappush
 import itertools
@@ -44,6 +47,7 @@ DISTINFO = {
     '>=3',
 }
 
+
 class Seq:
   ''' A numeric sequence implemented as a thread safe wrapper for
       `itertools.count()`.
@@ -70,12 +74,15 @@ class Seq:
   next = __next__
   __call__ = __next__
 
+
 __seq = Seq()
+
 
 def seq():
   ''' Return a new sequential value.
   '''
   return next(__seq)
+
 
 def the(iterable, context=None):
   ''' Returns the first element of an iterable, but requires there to be
@@ -98,12 +105,14 @@ def the(iterable, context=None):
 
   return it
 
+
 def first(iterable):
   ''' Return the first item from an iterable; raise `IndexError` on empty iterables.
   '''
   for first in iterable:
     return first
   raise IndexError("empty iterable %r" % (iterable,))
+
 
 def last(iterable):
   ''' Return the last item from an iterable; raise `IndexError` on empty iterables.
@@ -115,6 +124,7 @@ def last(iterable):
   if nothing:
     raise IndexError("no items in iterable: %r" % (iterable,))
   return last  # pylint: disable=undefined-loop-variable
+
 
 def get0(iterable, default=None):
   ''' Return first element of an iterable, or the default.
@@ -152,7 +162,6 @@ def consumed(it: Iterator, last_item=lambda _: False) -> Generator:
     return
   yield last_item
   yield from it
-
 def tee(iterable, *Qs):
   ''' A generator yielding the items from an iterable
       which also copies those items to a series of queues.
@@ -168,6 +177,7 @@ def tee(iterable, *Qs):
     for Q in Qs:
       Q.put(item)
     yield item
+
 
 def imerge(*iters, **kw):
   ''' Merge an iterable of ordered iterables in order.
@@ -220,6 +230,7 @@ def imerge(*iters, **kw):
     else:
       heappush(heap, _MergeHeapItem((head, it)))
 
+
 def onetoone(func):
   ''' A decorator for a method of a sequence to merge the results of
       passing every element of the sequence to the function, expecting a
@@ -243,6 +254,7 @@ def onetoone(func):
 
   return gather
 
+
 def onetomany(func):
   ''' A decorator for a method of a sequence to merge the results of
       passing every element of the sequence to the function, expecting
@@ -265,6 +277,7 @@ def onetomany(func):
 
   return gather
 
+
 def isordered(items, reverse=False, strict=False):
   ''' Test whether an iterable is ordered.
       Note that the iterable is iterated, so this is a destructive
@@ -284,6 +297,7 @@ def isordered(items, reverse=False, strict=False):
     is_first = False
   return True
 
+
 def common_prefix_length(*seqs):
   ''' Return the length of the common prefix of sequences `seqs`.
   '''
@@ -299,10 +313,12 @@ def common_prefix_length(*seqs):
   # return the length of the shorted sequence
   return len(min(*seqs, key=len))
 
+
 def common_suffix_length(*seqs):
   ''' Return the length of the common suffix of sequences `seqs`.
   '''
   return common_prefix_length(list(map(lambda s: list(reversed(s)), *seqs)))
+
 
 class TrackingCounter:
   ''' A wrapper for a counter which can be incremented and decremented.
@@ -403,6 +419,7 @@ class TrackingCounter:
       watcher.acquire()
     watcher.wait()
 
+
 class StatefulIterator:
   ''' A trivial iterator which wraps another iterator to expose some tracking state.
 
@@ -481,7 +498,6 @@ class ReIterable(Iterable):
 
 # better name suggested by λambda @ python.discord
 ClonedIterator = OBSOLETE(ReIterable)
-
 def splitoff(sq, *sizes):
   ''' Split a sequence into (usually short) prefixes and a tail,
       for example to construct subdirectory trees based on a UUID.
@@ -514,6 +530,7 @@ def splitoff(sq, *sizes):
   parts.append(sq[offset:])
   return parts
 
+
 def unrepeated(it, seen=None, signature=None):
   ''' A generator yielding items from the iterable `it` with no repetitions.
 
@@ -540,13 +557,14 @@ def unrepeated(it, seen=None, signature=None):
   if seen is None:
     seen = set()
   if signature is None:
-    signature = lambda item: item
+    signature = lambda item: item # noqa E731
   for item in it:
     sig = signature(item)
     if sig in seen:
       continue
     seen.add(sig)
     yield item
+
 
 @decorator
 def _greedy_decorator(g, queue_depth=0):
@@ -555,6 +573,7 @@ def _greedy_decorator(g, queue_depth=0):
     return greedy(g(*a, **kw), queue_depth=queue_depth)
 
   return greedy_generator
+
 
 def greedy(g=None, queue_depth=0):
   ''' A decorator or function for greedy computation of iterables.
@@ -715,6 +734,7 @@ def greedy(g=None, queue_depth=0):
   Thread(target=run_generator).start()
   return iter(q)
 
+
 def skip_map(func, *iterables, except_types, quiet=False):
   ''' A version of `map()` which will skip items where `func(item)`
       raises an exception in `except_types`, a tuple of exception types.
@@ -735,10 +755,12 @@ def skip_map(func, *iterables, except_types, quiet=False):
             "skip_map(func=%s): item=%s: skip exception: %s", func, item, e
         )
 
+
 # infill object generic type
 _infill_T = TypeVar('_infill_T')
 # infill object key generic type
 _infill_K = TypeVar('_infill_K', bound=Hashable)
+
 
 def infill(
     objs: Iterable[_infill_T],
@@ -775,6 +797,7 @@ def infill(
     missing = required - existing
     if all or missing:
       yield obj, missing
+
 
 def infill_from_batches(
     objss: Iterable[Iterable[_infill_T]],
@@ -814,11 +837,13 @@ def infill_from_batches(
         objs, obj_keys=obj_keys, existing_keys=existing_keys, all=all
     )
 
+
 def not_none(*iterables):
   ''' Filter the iterables for items which are not `None`.
   '''
   for iterable in iterables:
     yield from filter(lambda item: item is not None, iterable)
+
 
 class range:
   ''' A class like the builtin `range` exceppt that it will
@@ -1010,7 +1035,6 @@ def order(
   for i, item in indexed_items:
     yield from ordered.push(i, item)
   yield from ordered.drain()
-
 def with_neighbours(it: Iterable, no_neighbour=None):
   ''' Return 3-tuples of `(prev,curr,next)` from the iterable `it`
       where `curr` is each item from `it` and `prev` and `next` are
@@ -1048,6 +1072,7 @@ def with_neighbours(it: Iterable, no_neighbour=None):
     curr_item = next_item
   # we're already set up for the next iteration
   yield prev_item, curr_item, no_neighbour
+
 
 if __name__ == '__main__':
   import sys

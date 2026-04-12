@@ -46,6 +46,9 @@ The main items supplied by this module are:
 - `pfxprint()`: call `print()` with a leading prefix
 '''
 
+# Add flake8 fixes - easy fixes -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
+
 from __future__ import print_function
 from contextlib import contextmanager
 from functools import partial
@@ -55,7 +58,7 @@ import sys
 import threading
 import traceback
 
-from cs.deco import decorator, contextdecorator, fmtdoc, logging_wrapper
+from cs.deco import decorator, fmtdoc, logging_wrapper
 from cs.py.func import funcname, func_a_kw_fmt
 from cs.py3 import StringTypes, ustr, unicode
 
@@ -84,6 +87,7 @@ DEFAULT_SEPARATOR = ': '
 
 cmd = None
 
+
 @fmtdoc
 def unpfx(s, sep=None):
   ''' Strip the leading prefix from the string `s`
@@ -98,6 +102,7 @@ def unpfx(s, sep=None):
     sep = DEFAULT_SEPARATOR
   return s.rsplit(sep, 1)[-1].strip()
 
+
 def pfx_iter(tag, iterable):
   ''' Wrapper for iterables to prefix exceptions with `tag`.
   '''
@@ -111,6 +116,7 @@ def pfx_iter(tag, iterable):
         break
     yield i
 
+
 def pfx_call(func, *a, **kw):
   ''' Call `func(*a,**kw)` within an enclosing `Pfx` context manager
       reciting the function name and arguments.
@@ -123,6 +129,7 @@ def pfx_call(func, *a, **kw):
   pfxf, pfxav = func_a_kw_fmt(func, *a, **kw)
   with Pfx(pfxf, *pfxav):
     return func(*a, **kw)
+
 
 class _PfxThreadState(threading.local):
   ''' A Thread local class to track `Pfx` stack state.
@@ -185,6 +192,7 @@ class _PfxThreadState(threading.local):
     ''' Pop a Pfx instance from the stack.
     '''
     return self.stack.pop()
+
 
 class Pfx(object):
   ''' A context manager to maintain a per-thread stack of message prefixes.
@@ -334,13 +342,13 @@ class Pfx(object):
     try:
       current_prefix = cls._state.prefix
       if not isinstance(text, StringTypes):
-        ##X("%s: not a string (class %s), not prefixing: %r (sys.exc_info=%r)",
-        ##  current_prefix, text.__class__, text, sys.exc_info())
+        # X("%s: not a string (class %s), not prefixing: %r (sys.exc_info=%r)",
+        #   current_prefix, text.__class__, text, sys.exc_info())
         return text
       return (
-          current_prefix + DEFAULT_SEPARATOR + ustr(text, errors='replace')
-          # removed, makes messages unreadable
-          ##replace('\n', '\n  ' + current_prefix + DEFAULT_SEPARATOR)
+        current_prefix + DEFAULT_SEPARATOR + ustr(text, errors='replace')
+        # removed, makes messages unreadable
+        ##replace('\n', '\n  ' + current_prefix + DEFAULT_SEPARATOR)
       )
     except (MemoryError, RecursionError):
       return text
@@ -379,8 +387,8 @@ class Pfx(object):
       elif attr == 'args' and isinstance(e, LookupError):
         if (isinstance(value, tuple) and value):
           value0 = value[0]
-          if (isinstance(value0, str) and value0.startswith("'")
-              and value0.endswith("'")):
+          if (isinstance(value0, str) and value0.startswith("'") and
+              value0.endswith("'")):
             # args[0] is the key, do not fiddle with it
             continue
           value = (cls.prefixify(value0), *value[1:])
@@ -519,7 +527,7 @@ class Pfx(object):
   def log(self, level, msg, *args, **kwargs):
     ''' Log a message at an arbitrary log level to this Pfx's loggers.
     '''
-    ## to debug format errors ## D("msg=%r, args=%r, kwargs=%r", msg, args, kwargs)
+    # to debug format errors ## D("msg=%r, args=%r, kwargs=%r", msg, args, kwargs)
     for L in self.loggers:
       try:
         L.log(level, msg, *args, **kwargs)
@@ -560,10 +568,12 @@ class Pfx(object):
     '''
     self.log(logging.CRITICAL, msg, *args, **kwargs)
 
+
 def prefix():
   ''' Return the current Pfx prefix.
   '''
   return Pfx._state.prefix
+
 
 def pfxprint(*a, print_func=None, **kw):
   ''' Call `print()` with the current prefix.
@@ -574,6 +584,7 @@ def pfxprint(*a, print_func=None, **kw):
   if print_func is None:
     print_func = print
   print_func(prefix() + ':', *a, **kw)
+
 
 @contextmanager
 def PrePfx(tag, *args):
@@ -589,6 +600,7 @@ def PrePfx(tag, *args):
   finally:
     state._ur_prefix = old_ur_prefix
 
+
 class PfxCallInfo(Pfx):
   ''' Subclass of Pfx to insert current function and caller into messages.
   '''
@@ -599,6 +611,7 @@ class PfxCallInfo(Pfx):
         self, "at %s:%d %s(), called from %s:%d %s()", caller[0], caller[1],
         caller[2], grandcaller[0], grandcaller[1], grandcaller[2]
     )
+
 
 def PfxThread(target, **kw):
   ''' Factory function returning a `Thread`
@@ -613,6 +626,7 @@ def PfxThread(target, **kw):
       return target(*a, **kw)
 
   return HasThreadState.Thread(target=PfxThread_run, **kw)
+
 
 @decorator
 def pfx(func, message=None, *message_args):
@@ -690,6 +704,7 @@ def pfx(func, message=None, *message_args):
 
   return pfx_function_wrapper
 
+
 @decorator
 def pfx_method(method, use_str=False, with_args=False):
   ''' Decorator to provide a `Pfx` context for an instance method prefixing
@@ -742,6 +757,7 @@ def pfx_method(method, use_str=False, with_args=False):
   pfx_method_wrapper.__name__ = fname
   return pfx_method_wrapper
 
+
 def XP(msg, *args, **kwargs):
   ''' Variation on `cs.x.X`
       which prefixes the message with the current Pfx prefix.
@@ -749,6 +765,7 @@ def XP(msg, *args, **kwargs):
   if args:
     return X("%s%s" + msg, prefix(), DEFAULT_SEPARATOR, *args, **kwargs)
   return X(prefix() + DEFAULT_SEPARATOR + msg, **kwargs)
+
 
 def XX(prepfx, msg, *args, **kwargs):
   ''' Trite wrapper for `XP()` to transiently insert a leading prefix string.

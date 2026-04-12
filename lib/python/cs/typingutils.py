@@ -3,6 +3,9 @@
 ''' Trite hacks for use with typing.
 '''
 
+# Add flake8 fixes - easy fixes -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
+
 from typing import get_args, get_origin, Protocol, TypeVar, Union
 
 __version__ = '20260525-post'
@@ -15,6 +18,7 @@ DISTINFO = {
     ],
     'install_requires': [],
 }
+
 
 def is_optional(annotation):
   ''' Check if `annotation` is an `Optional[type]`.
@@ -32,6 +36,7 @@ def is_optional(annotation):
     # [type1,type2] is not an Optional
     return None
   return t
+
 
 def subtype(t, name=None):
   ''' Construct a `TypeVar` for subtypes of the type `t`.

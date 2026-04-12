@@ -64,10 +64,17 @@ from cs.upd import Upd, print, uses_upd
 from cs.vcs import VCS
 from cs.vcs.hg import VCS_Hg
 
+# Add flake8 fixes -
+# easy fixes, plus no bare except:
+# I don't know the intention so I made it except BaseException: -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
+
+
 def main(argv=None):
   ''' Main command line.
   '''
   return CSReleaseCommand(argv).run()
+
 
 URL_PYPI_PROD = 'https://pypi.python.org/pypi'
 URL_PYPI_TEST = 'https://test.pypi.org/legacy/'
@@ -116,6 +123,7 @@ re_RELEASE_TAG = re.compile(
     r'([a-z][^-]*)-(2[0-9][0-9][0-9][01][0-9][0-3][0-9](\.[1-9]\d*)?)$'
 )
 
+
 class ReleaseTag(namedtuple('ReleaseTag', 'name version')):
   ''' A parsed version of one of my release tags,
       which have the form *package_name*`-`*version*.
@@ -160,6 +168,7 @@ class ReleaseTag(namedtuple('ReleaseTag', 'name version')):
       next_seq = 1
     version = today.version + '.' + str(next_seq)
     return type(self)(self.name, version)
+
 
 class ModuleRequirement(namedtuple('ModuleRequirement',
                                    'module_name op requirements modules')):
@@ -269,6 +278,7 @@ class ModuleRequirement(namedtuple('ModuleRequirement',
       raise RuntimeError(f'unimplemented op {self.op!r}')
     return ''.join((self.module_name, self.op, release_version))
 
+
 def release_tags(vcs):
   ''' Generator yielding the current release tags.
   '''
@@ -276,6 +286,7 @@ def release_tags(vcs):
     m = re_RELEASE_TAG.match(tag)
     if m:
       yield tag
+
 
 def clean_release_entry(entry):
   '''Turn a VCS release log entry into some MarkDown.
@@ -294,6 +305,7 @@ def clean_release_entry(entry):
     lines = ['* ' + line for line in lines]
   return '\n'.join(lines)
 
+
 @uses_upd
 def prompt(message, *, fin=None, fout=None, upd):
   ''' Prompt for a one line answer.
@@ -308,6 +320,7 @@ def prompt(message, *, fin=None, fout=None, upd):
     fout.flush()
     return fin.readline().rstrip('\r\n')
 
+
 def ask(message, fin=None, fout=None):
   ''' Prompt with yes/no question, return true if response is "y" or "yes".
   '''
@@ -315,12 +328,14 @@ def ask(message, fin=None, fout=None):
   response = response.rstrip().lower()
   return response in ('y', 'yes')
 
+
 @contextmanager
 def pipefrom(*argv, **kw):
   ''' Context manager returning the standard output file object of a command.
   '''
   with ps_pipefrom(argv, **kw) as P:
     yield P.stdout
+
 
 class Modules(defaultdict):
   ''' An autopopulating dict of mod_name->Module.
@@ -354,6 +369,7 @@ class Modules(defaultdict):
       mrq = ModuleRequirement.from_requirement(requirement_spec, modules=self)
       requirement = mrq.resolve()
       return requirement
+
 
 # pylint: disable=too-many-public-methods
 class Module:
@@ -609,7 +625,7 @@ class Module:
     self.pkg_tags.set(tag_name, value)
     self.save_pkg_tags()
     self.vcs.commit(
-        f'{PKG_TAGS}: {self.name}: {msg+": " if msg else ""}set {tag_name}={value!r} [IGNORE]',
+        f'{PKG_TAGS}: {self.name}: {msg + ": " if msg else ""}set {tag_name}={value!r} [IGNORE]',
         PKG_TAGS
     )
 
@@ -798,7 +814,7 @@ class Module:
 
     if self.is_package:
       # stash the package in a top level directory of that name
-      ## dinfo['package_dir'] = {package_name: package_name}
+      # dinfo['package_dir'] = {package_name: package_name}
       dinfo['packages'] = [self.name]
     else:
       dinfo['py_modules'] = [self.name]
@@ -1130,8 +1146,8 @@ class Module:
         if (
             ignored or (
                 'IGNORE' not in firstline and (
-                    latest_release_line is None
-                    or firstline != latest_release_line
+                    latest_release_line is None or
+                    firstline != latest_release_line
                 )
             )
         )
@@ -1199,10 +1215,10 @@ class Module:
           except AttributeError:
             warning("missing and also missing from package %r", pkg_name)
           else:
-            ##warning("DISTINFO from package %r", pkg_name)
+            # warning("DISTINFO from package %r", pkg_name)
             pass
       else:
-        ##warning("DISTINFO from this module")
+        # warning("DISTINFO from this module")
         pass
     return D
 
@@ -1392,7 +1408,7 @@ class Module:
           release_dirpath, self, vcs, vcs_revision, bare=bare
       )
       yield release_dirpath, dist_rpaths
-    except:
+    except BaseException:
       persist = False
       raise
     finally:
@@ -1463,8 +1479,7 @@ class Module:
       subpaths = self.paths()
       for subpath in subpaths:
         with Pfx(subpath):
-          if any(
-              (fnmatch(subpath, ptn) for ptn in ("*.c", "*.md", "*.[1-9]"))):
+          if any((fnmatch(subpath, ptn) for ptn in ("*.c", "*.md", "*.[1-9]"))):
             print('include', subpath, file=mf)
 
     # create README.md
@@ -1491,8 +1506,8 @@ class Module:
             ('--out-dir', 'dist'),
             ('--sdist', '--wheel'),
             (
-                #'--skip-dependency-check',
-                #'--no-isolation',
+                # '--skip-dependency-check',
+                # '--no-isolation',
             ),
             '.',
         ],
@@ -1518,6 +1533,7 @@ class Module:
     assert sdist_rpath is not None
     assert wheel_rpath is not None
     return dict(sdist=sdist_rpath, wheel=wheel_rpath)
+
 
 class CSReleaseCommand(BaseCommand):
   ''' The `cs-release` command line implementation.
@@ -1590,8 +1606,8 @@ class CSReleaseCommand(BaseCommand):
                           pkg_tagsets=self.options.pkg_tagsets):
             yield
 
-  ##  export      Export release to temporary directory, report directory.
-  ##  freshmeat-submit Announce last release to freshmeat.
+  #  export      Export release to temporary directory, report directory.
+  #  freshmeat-submit Announce last release to freshmeat.
 
   @uses_runstate
   def cmd_check(self, argv, *, runstate: RunState):
@@ -2052,6 +2068,7 @@ class CSReleaseCommand(BaseCommand):
     pkg = self.options.modules[pkg_name]
     setup_cfg = pkg.compute_setup_cfg()
     setup_cfg.write(sys.stdout)
+
 
 if __name__ == '__main__':
   sys.exit(main(sys.argv))

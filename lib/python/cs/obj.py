@@ -7,8 +7,11 @@ r'''
 Convenience facilities for objects.
 '''
 
-from abc import ABC, abstractmethod
-import builtins
+# Add flake8 fixes -
+# easy fixes; suppress E731 as this is a unique case of conditional
+# lambda definition; suppress E742 because I can't ascertain exactly
+# what I would need to change if this type name were to change -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
 from collections import defaultdict
 from copy import copy as copy0
 from functools import partial
@@ -39,6 +42,7 @@ T_SEQ = 'SEQUENCE'
 T_MAP = 'MAPPING'
 T_SCALAR = 'SCALAR'
 
+
 def flavour(obj):
   """ Return constants indicating the ``flavour'' of an object:
       * `T_MAP`: DictType, DictionaryType, objects with an __keys__ or keys attribute.
@@ -56,8 +60,9 @@ def flavour(obj):
     return T_SEQ
   return T_SCALAR
 
+
 # pylint: disable=too-few-public-methods
-class O(SimpleNamespace):
+class O(SimpleNamespace): # noqa E742
   ''' The `O` class is now obsolete, please subclass `types.SimpleNamespace`
       or use a dataclass.
   '''
@@ -75,6 +80,7 @@ class O(SimpleNamespace):
           file=sys.stderr
       )
     SimpleNamespace.__init__(self, **kw)
+
 
 def O_merge(o, _conflict=None, _overwrite=False, **kw):
   ''' Merge key:value pairs from a mapping into an object.
@@ -104,6 +110,7 @@ def O_merge(o, _conflict=None, _overwrite=False, **kw):
         else:
           _conflict(o, attr, ovalue, value)
 
+
 def O_attrs(o):
   ''' Yield attribute names from `o` which are pertinent to `O_str`.
 
@@ -119,6 +126,7 @@ def O_attrs(o):
       if not callable(value):
         yield attr
 
+
 def O_attritems(o):
   ''' Generator yielding `(attr,value)` for relevant attributes of `o`.
   '''
@@ -129,6 +137,7 @@ def O_attritems(o):
       continue
     else:
       yield attr, value
+
 
 def O_str(o, no_recurse=False, seen=None):
   ''' Return a `str` representation of the object `o`.
@@ -172,6 +181,7 @@ def O_str(o, no_recurse=False, seen=None):
   seen.remove(id(o))
   return s
 
+
 def copy(obj, **kw):
   ''' Convenient function to shallow copy an object with simple modifications.
 
@@ -184,6 +194,7 @@ def copy(obj, **kw):
   for attr, value in kw.items():
     setattr(obj2, attr, value)
   return obj2
+
 
 def as_dict(o, selector=None):
   ''' Return a dictionary with keys mapping to the values of the attributes of `o`.
@@ -201,18 +212,20 @@ def as_dict(o, selector=None):
       and select attributes `attr` where `selector(attr)` is true.
   '''
   if selector is None:
-    match = lambda attr: attr and not attr.startswith('_')
+    match = lambda attr: attr and not attr.startswith('_') # noqa E731
   elif isinstance(selector, str):
-    match = lambda attr: attr.startswith(selector)
+    match = lambda attr: attr.startswith(selector) # noqa E731
   else:
     match = selector
   return {attr: getattr(o, attr) for attr in dir(o) if match(attr)}
+
 
 @OBSOLETE("use cs.obj.as_dict")
 def obj_as_dict(o, **kw):
   ''' OBSOLETE convesion of an object to a `dict`. Please us `cs.obj.as_dict`.
   '''
   raise RuntimeError("please use cs.obj.as_dict")
+
 
 class Proxy:
   ''' An extremely simple proxy object
@@ -278,6 +291,7 @@ class NoAttrs:
     '''
     raise AttributeError("%s.%s" % (self.__class__.__name__, attr))
 
+
 class TrackedClassMixin:
   ''' A mixin to track all instances of a particular class.
 
@@ -336,6 +350,7 @@ class TrackedClassMixin:
     for o, state in TrackedClassMixin.tcm_all_state(klass):
       print(str(type(o)), id(o), repr(state), file=f)
 
+
 def singleton(registry, key, factory, fargs, fkwargs):
   ''' Obtain an object for `key` via `registry` (a mapping of `key`=>object).
       Return `(is_new,object)`.
@@ -364,6 +379,7 @@ def singleton(registry, key, factory, fargs, fkwargs):
     registry[key] = instance
     is_new = True
   return is_new, instance
+
 
 # pylint: disable=too-few-public-methods
 class SingletonMixin:
@@ -538,6 +554,7 @@ class SingletonMixin:
               map(lambda ref: ref(), registry.valuerefs())
           )
       )
+
 
 class Sentinel:
   ''' A simple class for named sentinels whose `str()` is just the name
@@ -858,6 +875,7 @@ def public_subclasses(cls, extras=()):
     else:
       q.extend(subclasses)
   return classes
+
 
 if __name__ == '__main__':
   import cs.obj_tests

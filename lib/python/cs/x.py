@@ -43,6 +43,9 @@ The following environment variables affect the initial values of the globals:
   which often divert `sys.stderr`.
 '''
 
+# Add flake8 fixes - easy fixes -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
+
 import logging
 import os
 import os.path
@@ -80,6 +83,7 @@ if X_logger is not None:
   X_Logger = logging.getLogger(X_logger or None)
 # colouring
 X_default_colour = os.environ.get('CS_X_COLOUR')
+
 
 # pylint: disable=too-many-branches
 def X(msg, *args, file=None, colour=None):  # noqa: N802
@@ -145,6 +149,7 @@ def X(msg, *args, file=None, colour=None):  # noqa: N802
   if close_fp is not None:
     close_fp.close()
 
+
 # init X_via_tty (after X() because we use X() for messaging)
 env_via_tty = os.environ.get('CS_X_VIA_TTY', '')
 if not env_via_tty:
@@ -175,6 +180,7 @@ if os.environ.get('CS_X_BUILTIN', ''):
     pass
   else:
     builtins.X = X
+
 
 def Y(msg, *a, **kw):  # noqa: N802
   ''' Wrapper for `X()` rendering in yellow.

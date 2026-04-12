@@ -6,6 +6,13 @@ Gimmicks and hacks to make some of my other modules more robust and
 less demanding of others.
 '''
 
+# Add flake8 fixes -
+# easy fixes; suppress E401 because this is a middle-man module for
+# improving robustness that involves importing stuff for other modules
+# to import; suppress E731 to preserve execution context; rewrite
+# lambdas as defs to resolve resolvable E731s -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
+
 __version__ = '20260311-post'
 
 DISTINFO = {
@@ -27,7 +34,7 @@ except ImportError:
   try:
     from collections.abc import ByteString as Buffer
   except ImportError:
-    from typing import ByteString as Buffer
+    from typing import ByteString as Buffer # noqa E401
 
 try:
   from contextlib import nullcontext  # pylint: disable=unused-import
@@ -103,8 +110,9 @@ except NameError:
         Exception.__init__(self, msg)
 
 # simplistic versions of cs.lex r() and s()
-r = lambda obj: "%s:%s" % (obj.__class__.__name__, repr(obj))
-s = lambda obj: "%s:%s" % (obj.__class__.__name__, str(obj))
+r = lambda obj: "%s:%s" % (obj.__class__.__name__, repr(obj)) # noqa E731
+s = lambda obj: "%s:%s" % (obj.__class__.__name__, str(obj)) # noqa E731
+
 
 class _logging_map(dict):
 
@@ -119,7 +127,9 @@ class _logging_map(dict):
     self[func_name] = func
     return func
 
+
 _logging_functions = _logging_map()
+
 
 # Pull logging functions from cs.logutils if available, otherwise logging.
 # This defers the cs.logutils import, breaking circular imports.
@@ -130,26 +140,41 @@ def _logging_stub(func_name, *a, **kw):
     kw['stacklevel'] = stacklevel + 1
   return logging_function(*a, **kw)
 
+
 # Wrapper for `log()` which does a deferred import.
-log = lambda *a, **kw: _logging_stub('log', *a, **kw)
+def log(*a, **kw):
+  return _logging_stub('log', *a, **kw)
+
 
 # Wrapper for `debug()` which does a deferred import.
-debug = lambda *a, **kw: _logging_stub('debug', *a, **kw)
+def debug(*a, **kw):
+  return _logging_stub('debug', *a, **kw)
+
 
 # Wrapper for `info()` which does a deferred import.
-info = lambda *a, **kw: _logging_stub('info', *a, **kw)
+def info(*a, **kw):
+  return _logging_stub('info', *a, **kw)
+
 
 # Wrapper for `info()` which does a deferred import.
-trace = lambda *a, **kw: _logging_stub('trace', *a, **kw)
+def trace(*a, **kw):
+  return _logging_stub('trace', *a, **kw)
+
 
 # Wrapper for `warning()` which does a deferred import.
-warning = lambda *a, **kw: _logging_stub('warning', *a, **kw)
+def warning(*a, **kw):
+  return _logging_stub('warning', *a, **kw)
+
 
 # Wrapper for `error()` which does a deferred import.
-error = lambda *a, **kw: _logging_stub('error', *a, **kw)
+def error(*a, **kw):
+  return _logging_stub('error', *a, **kw)
+
 
 # Wrapper for `exception()` which does a deferred import.
-exception = lambda *a, **kw: _logging_stub('exception', *a, **kw)
+def exception(*a, **kw):
+  return _logging_stub('exception', *a, **kw)
+
 
 def open_append(path):
   ''' Ghastly hack to open something for append

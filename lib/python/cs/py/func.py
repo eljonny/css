@@ -8,6 +8,9 @@ r'''
 Convenience facilities related to Python functions.
 '''
 
+# Add flake8 fixes - easy fixes -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
+
 from functools import partial
 
 __version__ = '20250914-post'
@@ -22,6 +25,7 @@ DISTINFO = {
     'python_requires':
     '>=3',
 }
+
 
 def funcname(func):
   ''' Return a name for the supplied function `func`.
@@ -40,6 +44,7 @@ def funcname(func):
   module_name = getattr(func, '__module__', None)
   return "%s:%s" % (module_name, name) if module_name else name
 
+
 def funccite(func):
   ''' Return a citation for a function (name and code location).
   '''
@@ -56,6 +61,7 @@ def funccite(func):
       shortpath(code.co_filename),
       code.co_firstlineno,
   )
+
 
 def func_a_kw_fmt(func, *a, **kw):
   ''' Prepare a percent-format string and associated argument list
@@ -78,11 +84,13 @@ def func_a_kw_fmt(func, *a, **kw):
     av.extend(kv)
   return '%s(' + ','.join(afv) + ')', av
 
+
 def func_a_kw(func, *a, **kw):
   ''' Return a string representing a call to `func(*a,**kw)`.
   '''
   fmt, args = func_a_kw_fmt(func, *a, **kw)
   return fmt % tuple(args)
+
 
 def callif(doit, func, *a, **kw):
   ''' Call `func(*a,**kw)` if `doit` is true
@@ -104,6 +112,7 @@ def callif(doit, func, *a, **kw):
   modes.get('print', print)(func_a_kw(func, *a, **kw))
   return None
 
+
 def callmethod_if(obj, method, default=None, a=None, kw=None):
   ''' Call the named `method` on the object `obj` if it exists.
 
@@ -121,6 +130,7 @@ def callmethod_if(obj, method, default=None, a=None, kw=None):
   if kw is None:
     kw = {}
   return m(*a, **kw)
+
 
 def prop(func):
   ''' A substitute for the builtin @property.
@@ -141,6 +151,7 @@ def prop(func):
 
   prop_wrapper.__name__ = "@prop(%s)" % (funcname(func),)
   return property(prop_wrapper)
+
 
 def derived_property(
     func,
@@ -182,6 +193,7 @@ def derived_property(
     return p
 
   return property(property_value)
+
 
 def derived_from(property_name):
   ''' A property which must be recomputed

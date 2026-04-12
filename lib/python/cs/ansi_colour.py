@@ -11,6 +11,9 @@ Mapping and function for adding ANSI terminal colour escape sequences
 to strings for colour highlighting of output.
 '''
 
+# Add flake8 fixes - easy fixes -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
+
 import os
 from os.path import basename, exists as existspath, join as joinpath
 import re
@@ -99,6 +102,7 @@ COLOUR_CODES = {
     'nooverline': 55,
 }
 
+
 def colour_escape(code):
   ''' Return the ANSI escape sequence to activate the colour `code`.
       `code` may be an `int` or a `str` which indexes `COLOUR_CODES`.
@@ -109,6 +113,7 @@ def colour_escape(code):
     except ValueError:
       code = COLOUR_CODES[code]
   return '\033[' + str(code) + 'm'
+
 
 # the known colour names and their escape sequences
 COLOURS = {name: colour_escape(name) for name in COLOUR_CODES}
@@ -121,6 +126,7 @@ assert NORMAL_COLOUR in COLOURS
 DEFAULT_HIGHLIGHT = 'cyan'
 assert DEFAULT_HIGHLIGHT in COLOURS
 
+
 def env_no_color(environ=None):
   ''' Test the `$NO_COLOR` environment variable per the specification at
       https://no-color.org/
@@ -128,6 +134,7 @@ def env_no_color(environ=None):
   if environ is None:
     environ = os.environ
   return 'NO_COLOR' in environ
+
 
 def colourise(
     s,
@@ -165,6 +172,7 @@ def colourise(
       clines.append(colour_on + line + colour_off)
   return "\n".join(clines)
 
+
 def make_pattern(pattern, default_colour=None):
   ''' Convert a `pattern` specification into a `(colour,regexp)` tuple.
 
@@ -199,6 +207,7 @@ def make_pattern(pattern, default_colour=None):
     colour = default_colour
   return colour, regexp
 
+
 def make_patterns(patterns, default_colour=None):
   ''' Convert an iterable of pattern specifications into a list of
       `(colour,regexp)` tuples.
@@ -218,6 +227,7 @@ def make_patterns(patterns, default_colour=None):
       make_pattern(pattern, default_colour=default_colour)
       for pattern in patterns
   ]
+
 
 def colourise_patterns(s, patterns, default_colour=None):
   ''' Colourise a string `s` according to `patterns`.
@@ -253,6 +263,7 @@ def colourise_patterns(s, patterns, default_colour=None):
   if prev_colour != NORMAL_COLOUR:
     subs.append(COLOURS[NORMAL_COLOUR])
   return ''.join(subs)
+
 
 class TerminalColors:
   ''' A parser for `/etc/terminal-colors.d'` files.

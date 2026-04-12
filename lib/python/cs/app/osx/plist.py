@@ -24,6 +24,9 @@ except ImportError:
 
 __version__ = '20231129-post'
 
+# Add flake8 fixes - easy fixes -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
+
 DISTINFO = {
     'keywords': ["python2", "python3"],
     'classifiers': [
@@ -38,10 +41,12 @@ DISTINFO = {
     ],
 }
 
+
 def is_iphone():
   ''' Test if we're on an iPhone.
   '''
   return os.uname()[4].startswith('iPhone')
+
 
 def import_as_etree(plist):
   ''' Load an Apple plist and return an etree.Element.
@@ -74,6 +79,7 @@ def import_as_etree(plist):
     )
   return E
 
+
 def ingest_plist(plist, recurse=False, resolve=False):
   ''' Ingest an Apple plist and return as a `PListDict`.
       Trivial wrapper for `import_as_etree` and `ingest_plist_etree`.
@@ -95,6 +101,7 @@ def ingest_plist(plist, recurse=False, resolve=False):
               subpd = resolve_object(subpd['$objects'], 1)
             pd[key] = subpd
     return pd
+
 
 def export_xml_to_plist(E, fp=None, fmt='binary1'):
   ''' Export the content of an `etree.Element` to a plist file.
@@ -120,6 +127,7 @@ def export_xml_to_plist(E, fp=None, fmt='binary1'):
     )
   return None
 
+
 def ingest_plist_etree(plist_etree):
   ''' Recursively a plist's `ElementTree` into a native Python structure.
       This returns a `PListDict`, a mapping of the plists's top dict
@@ -129,6 +137,7 @@ def ingest_plist_etree(plist_etree):
   if root.tag != 'plist':
     raise ValueError("%r root Element is not a plist" % (root,))
   return ingest_plist_dict(root[0])
+
 
 # pylint: disable=too-many-return-statements
 def ingest_plist_elem(e):
@@ -157,6 +166,7 @@ def ingest_plist_elem(e):
     return dt
   return e
 
+
 def ingest_plist_array(pa):
   ''' Ingest a plist <array>, returning a Python list.
   '''
@@ -167,6 +177,7 @@ def ingest_plist_array(pa):
     e = pa[i]
     a.append(ingest_plist_elem(e))
   return a
+
 
 def ingest_plist_dict(pd):
   ''' Ingest a plist <dict> Element, returning a PListDict.
@@ -189,6 +200,7 @@ def ingest_plist_dict(pd):
     raise ValueError("no value for key %r" % (key,))
   return d
 
+
 class PListDict(dict):
   ''' A mapping for a plist, subclassing `dict`, which also allows
       access to the elements by attribute if that does not conflict
@@ -210,14 +222,14 @@ class PListDict(dict):
     else:
       super().__setattr__(attr, value)
 
+
 # pylint: disable=too-many-statements.too-many-branches,too-many-nested-blocks,too-many-locals
 def resolve_object(objs, i):
   ''' Resolve an object definition from structures like an iPhoto album
       queryData object list.
   '''
   o = objs[i]
-  if isinstance(
-      o, (str, int, bool, float, ObjectClassDefinition, ObjectClassInstance)):
+  if isinstance(o, (str, int, bool, float, ObjectClassDefinition, ObjectClassInstance)):
     return o
   if isinstance(o, PListDict):
     if '$class' in o:
@@ -249,8 +261,6 @@ def resolve_object(objs, i):
         value = o['NS.data']
       elif 'NSLocation' in o:
         count = o['NSRangeCount']
-        length = o['NSLength']
-        location = o['NSLocation']
         value = o
       elif 'NSRangeData' in o:
         count = o['NSRangeCount']
@@ -282,6 +292,7 @@ def resolve_object(objs, i):
   objs[i] = o
   return o
 
+
 # pylint: disable=too-few-public-methods
 class ObjectClassDefinition(object):
   ''' A representation of a "class" object, used in `resolve_object()`
@@ -296,6 +307,7 @@ class ObjectClassDefinition(object):
     return "%s%r" % (self.name, self.mro)
 
   __repr__ = __str__
+
 
 class ObjectClassInstance(object):
   ''' A representation of a "class instance", used in `resolve_object()`
@@ -356,6 +368,7 @@ class ObjectClassInstance(object):
 # Old routines written for use inside my jailbroken iPhone.
 #
 
+
 def readPlist(path, binary=False):
   ''' An old routine I made to use inside my jailbroken iPhone.
   '''
@@ -372,6 +385,7 @@ def readPlist(path, binary=False):
   pl = plistlib.readPlist(tpath)
   os.unlink(tpath)
   return pl
+
 
 def writePlist(rootObj, path, binary=False):
   ''' An old routine I made to use inside my jailbroken iPhone.

@@ -8,6 +8,13 @@ r'''
 Assorted function decorators.
 '''
 
+# Add flake8 fixes -
+# easy fixes, suppress E731 because I think it would hurt the context;
+# suppress instance of E129 that seems like a bug because the visual
+# indent was not the same as the next nested indent, even though that
+# is what E129 indicates -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
+
 from collections import defaultdict
 from contextlib import contextmanager
 from inspect import isgeneratorfunction, ismethod, signature, Parameter
@@ -29,6 +36,7 @@ DISTINFO = {
     'install_requires': ['cs.gimmicks', 'cs.typingutils'],
 }
 
+
 def ALL(func):
   ''' Include this function's name in its module's `__all__` list.
 
@@ -47,6 +55,7 @@ def ALL(func):
   '''
   sys.modules[func.__module__].__all__.append(func.__name__)
   return func
+
 
 def fmtdoc(func):
   ''' A decorator to format a function's docstring.
@@ -217,6 +226,7 @@ def decorator(deco=None, *, decorable=callable):
   metadeco.__module__ = getattr(deco, '__module__', None)
   return metadeco
 
+
 @decorator
 def attr(func, **attrs):
   ''' A decorator to set attributes on a function.
@@ -238,6 +248,7 @@ def attr(func, **attrs):
   for attr, value in attrs.items():
     setattr(func, attr, value)
   return func
+
 
 @decorator
 def contextdecorator(cmgrfunc):
@@ -420,6 +431,7 @@ def contextdecorator(cmgrfunc):
 
   return cmgrdeco
 
+
 @decorator
 def logging_wrapper(log_call, stacklevel_increment=1):
   ''' Decorator for logging call shims
@@ -440,6 +452,7 @@ def logging_wrapper(log_call, stacklevel_increment=1):
   log_func_wrapper.__name__ = log_call.__name__
   log_func_wrapper.__doc__ = log_call.__doc__
   return log_func_wrapper
+
 
 @decorator
 def OBSOLETE(func, suggestion=None):
@@ -514,6 +527,7 @@ def OBSOLETE(func, suggestion=None):
       __doc__=f'{doc}\n\n{funcdoc}',
   )
 
+
 @OBSOLETE(suggestion='cs.cache.cachedmethod')
 def cached(*a, **kw):
   ''' Former name for @cachedmethod.
@@ -521,12 +535,14 @@ def cached(*a, **kw):
   from cs.cache import cachedmethod
   return cachedmethod(*a, **kw)
 
+
 @OBSOLETE(suggestion='cs.cache.cachedmethod')
 def cachedmethod(*a, **kw):
   ''' @cachedmethod is now in cs.cache.
   '''
   from cs.cache import cachedmethod
   return cachedmethod(*a, **kw)
+
 
 def contextual(func):
   ''' Wrap a simple function as a context manager.
@@ -553,6 +569,7 @@ def contextual(func):
   cmgr.__name__ = '@contextual(%s)' % func_name
   cmgr.__doc__ = func.__doc__
   return cmgr
+
 
 @decorator
 def strable(func, open_func=None):
@@ -615,6 +632,7 @@ def strable(func, open_func=None):
 
   return accepts_str
 
+
 def with_(func, obj):
   ''' A decorator to run `func` inside a `with obj:`.
 
@@ -628,6 +646,7 @@ def with_(func, obj):
       return func(*a, **kw)
 
   return with_obj
+
 
 def observable_class(property_names, only_unequal=False):
   ''' Class decorator to make various instance attributes observable.
@@ -728,6 +747,7 @@ def observable_class(property_names, only_unequal=False):
     return cls
 
   return make_observable_class
+
 
 @decorator
 def default_params(func, _strict=False, **param_defaults):
@@ -842,6 +862,7 @@ def default_params(func, _strict=False, **param_defaults):
   defaulted_func.__signature__ = sig
   return defaulted_func
 
+
 @decorator
 def uses_cmd_options(
     func, _strict=False, _options_param_name='options', **option_defaults
@@ -925,6 +946,7 @@ def uses_cmd_options(
         return func(*func_a, **func_kw)
 
   return uses_cmd_wrapper
+
 
 uses_doit = uses_cmd_options(doit=True)
 uses_force = uses_cmd_options(force=False)
@@ -1136,7 +1158,7 @@ def promote(func, params=None, types=None):
     arg_mapping = bound_args.arguments
     # we don't import cs.pfx (many dependencies!)
     # pylint: disable=unnecessary-lambda-assignment
-    get_context = lambda: (
+    get_context = lambda: ( # noqa E731
         "@promote(%s.%s)(%s=%s:%r)" % (
             func.__module__,
             func.__name__,
@@ -1206,8 +1228,8 @@ def promote(func, params=None, types=None):
             promoted_value = as_value
       except TypeError:
         # promotion fails
-        if (optional and arg_value is param.default
-            and param.default is not Parameter.empty):
+        if (optional and arg_value is param.default and
+            param.default is not Parameter.empty): # noqa E129
           # allow omitted/unconverted optional value with default None
           continue
         raise
@@ -1229,6 +1251,7 @@ def promote(func, params=None, types=None):
       return func(*a, **kw)
 
   return promoting_func
+
 
 # pylint: disable=too-few-public-methods
 class Promotable:

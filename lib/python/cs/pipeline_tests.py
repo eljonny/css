@@ -5,17 +5,19 @@
     - Cameron Simpson <cs@cskk.id.au>
 '''
 
-from functools import partial
+# Add flake8 fixes, fix broken enums -
+# Remove unused imports, easy fixes, remove unused local, constants
+# appear to have been converted to an enum called StageType -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
+
 import sys
-import time
 import unittest
 from cs.timeutils import sleep
 from cs.later import Later
 from cs.pipeline import (
-    pipeline, FUNC_ONE_TO_ONE, FUNC_ONE_TO_MANY, FUNC_MANY_TO_MANY,
-    FUNC_SELECTOR
+    pipeline, StageType
 )
-from cs.result import report
+
 
 class TestPipeline(unittest.TestCase):
   ''' Unit tests for pipelines.
@@ -54,7 +56,7 @@ class TestPipeline(unittest.TestCase):
     '''
     with Later(1) as L:
       items = ['a', 'b', 'c', 'g', 'f', 'e']
-      P = pipeline(L, [(FUNC_ONE_TO_ONE, lambda x: x)], items)
+      P = pipeline(L, [(StageType.ONE_TO_ONE, lambda x: x)], items)
       result = list(P.outQ)
       self.assertEqual(items, result)
 
@@ -67,7 +69,7 @@ class TestPipeline(unittest.TestCase):
     def func(x):
       yield x
 
-    P = pipeline(L, [(FUNC_ONE_TO_MANY, func)], items)
+    P = pipeline(L, [(StageType.ONE_TO_MANY, func)], items)
     self.assertIsNot(P.outQ, items)
     result = list(P.outQ)
     self.assertEqual(items, result)
@@ -83,7 +85,7 @@ class TestPipeline(unittest.TestCase):
       yield x
       yield x
 
-    P = pipeline(L, [(FUNC_ONE_TO_MANY, func)], items)
+    P = pipeline(L, [(StageType.ONE_TO_MANY, func)], items)
     self.assertIsNot(P.outQ, items)
     result = list(P.outQ)
     # values may be interleaved due to parallelism
@@ -100,7 +102,7 @@ class TestPipeline(unittest.TestCase):
     def func(x):
       return sorted(x)
 
-    P = pipeline(L, [(FUNC_MANY_TO_MANY, func)], items)
+    P = pipeline(L, [(StageType.MANY_TO_MANY, func)], items)
     self.assertIsNot(P.outQ, items)
     result = list(P.outQ)
     self.assertEqual(result, expected)
@@ -110,12 +112,11 @@ class TestPipeline(unittest.TestCase):
     '''
     L = self.L
     items = ['a', 'b', 'c', 'g', 'f', 'e']
-    expected = ['a', 'b', 'c', 'e', 'f', 'g']
 
     def func(x):
       return set(x)
 
-    P = pipeline(L, [(FUNC_MANY_TO_MANY, func)], items)
+    P = pipeline(L, [(StageType.MANY_TO_MANY, func)], items)
     self.assertIsNot(P.outQ, items)
     result = set(P.outQ)
     self.assertEqual(result, set(items))
@@ -131,7 +132,7 @@ class TestPipeline(unittest.TestCase):
     def wanted(x):
       return x in want
 
-    P = pipeline(L, [(FUNC_SELECTOR, wanted)], items)
+    P = pipeline(L, [(StageType.SELECTOR, wanted)], items)
     self.assertIsNot(P.outQ, items)
     result = list(P.outQ)
     self.assertEqual(result, expected)
@@ -174,18 +175,20 @@ class TestPipeline(unittest.TestCase):
 
     P = pipeline(
         L, [
-            (FUNC_ONE_TO_MANY, double), (FUNC_ONE_TO_MANY, double),
-            (FUNC_MANY_TO_MANY, sorted)
+            (StageType.ONE_TO_MANY, double), (StageType.ONE_TO_MANY, double),
+            (StageType.MANY_TO_MANY, sorted)
         ], items
     )
     self.assertIsNot(P.outQ, items)
     result = list(P.outQ)
     self.assertEqual(result, expected)
 
+
 def selftest(argv):
   ''' Run unit tests for cs.pipeline.
   '''
   unittest.main(__name__, None, argv, failfast=True)
+
 
 if __name__ == '__main__':
   selftest(sys.argv)

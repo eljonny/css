@@ -9,6 +9,9 @@
     you're welcome to it, but it does not pretend to be large or complete.
 '''
 
+# Add flake8 fixes - easy fixes -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
+
 from datetime import date, datetime, tzinfo, timedelta, timezone
 from time import localtime, mktime, strftime
 
@@ -22,6 +25,7 @@ DISTINFO = {
     ],
     'install_requires': [],
 }
+
 
 class tzinfoHHMM(tzinfo):
   ''' tzinfo class based on +HHMM / -HHMM strings.
@@ -54,12 +58,14 @@ class tzinfoHHMM(tzinfo):
   def tzname(self, dt):
     return self._tzname
 
+
 try:
   from datetime import timezone  # pylint: disable=ungrouped-imports
 except ImportError:
   UTC = tzinfoHHMM('+0000')
 else:
   UTC = timezone.utc
+
 
 def isodate(when=None, dashed=True):
   ''' Return a date in ISO8601 YYYY-MM-DD format, or YYYYMMDD if not `dashed`.
@@ -74,6 +80,7 @@ def isodate(when=None, dashed=True):
     format_s = '%Y%m%d'
   return strftime(format_s, when)
 
+
 def datetime2unixtime(dt):
   ''' Convert a timezone aware `datetime` to a UNIX timestamp.
       *WARNING*: a naive datetime is assumed to be in UTC.
@@ -82,16 +89,19 @@ def datetime2unixtime(dt):
     dt = dt.replace(tzinfo=UTC)
   return dt.timestamp()
 
+
 def unixtime2datetime(unixtime, *, tz: tzinfo = UTC):
   ''' Convert a a UNIX timestamp to a `datetime` in the timezone `tz`.
       *Note*: the default timezone is UTC, not the local timezone.
   '''
   return datetime.fromtimestamp(unixtime, tz=tz)
 
+
 def localdate2unixtime(d):
   ''' Convert a localtime `date` into a UNIX timestamp.
   '''
   return mktime(date(d.year, d.month, d.day).timetuple())
+
 
 def as_datetime(
     dt: float | str | date | datetime,
@@ -129,6 +139,7 @@ def as_datetime(
   else:
     raise TypeError(f'cannot convert {type(dt).__name__}:{dt!r} to a datetime')
   return dt
+
 
 class UNIXTimeMixin:
   ''' A mixin for classes with a `.unixtime` attribute,
