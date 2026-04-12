@@ -1,0 +1,8 @@
+[flake8]
+ignore = E111,E114,E129,E402,E501,W504,E731
+
+# Add flake8 config -
+# Irrelevant warnings; buggy warnings (E129); cannot perform inline
+# suppression in some places because there is already a pylint inline
+# suppression (E731) -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
