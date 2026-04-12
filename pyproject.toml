@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools >= 77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cs.app.osx.plist"
+description = "This is a repackaging of the PyPI module with all the dependencies included."
+version = "20231129"
+readme = "README.md"
+license = "LicenseRef-CSScriptsLicense"
+license-files = ["LICENSE.md"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent"
+]
+keywords = [
+    "apple",
+    "osx",
+    "plist",
+    "property list",
+    "plistlib",
+    "binary plist"
+]
+dependencies = [
+    "icontract",
+    "python-dateutil",
+    "typeguard"
+]
+requires-python = ">= 3.8"
+authors = [
+  {name = "Cameron Simpson", email = "cs@cskk.id.au"},
+  {name = "Jonathan Hyry", email = "jonathan.hyry@outlook.com"}
+]
+maintainers = [
+  {name = "Jonathan Hyry", email = "jonathan.hyry@outlook.com"}
+]
+
+[project.urls]
+PyPI = "https://pypi.org/user/cameron.simpson/"
+Sourcehut = "https://hg.sr.ht/~cameron-simpson/css"
+Docs = "http://www.cskk.ezoshosting.com/cs/css/"
+Manual = "http://www.cskk.ezoshosting.com/cs/man/"
+BitBucket = "https://bitbucket.org/cameron_simpson/css/"
+GitHub = "https://github.com/cameron-simpson/css"
+Website = "http://www.cskk.ezoshosting.com/cs/"
+
+[tool.setuptools]
+py-modules = [
+    "cs.app.osx.plist",
+    "cs.logutils",
+    "cs.ansi_colour",
+    "cs.gimmicks",
+    "cs.context",
+    "cs.deco",
+    "cs.typingutils",
+    "cs.lex",
+    "cs.dateutils",
+    "cs.obj",
+    "cs.pfx",
+    "cs.py.func",
+    "cs.py3",
+    "cs.seq",
+    "cs.x",
+    "cs.sh"
+]
+
+[tool.setuptools.package-dir]
+"" = "lib/python"
+
+# Add pyproject.toml for builds -
+# For supporting builds of the required modules; cs.app.osx.plist
+# package -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
