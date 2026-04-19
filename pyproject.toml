@@ -7,12 +7,27 @@ name = "cs.app.osx.plist"
 description = "This is a repackaging of the PyPI module with all the dependencies included."
 dynamic = ["version"]
 readme = "README.md"
-license = "LicenseRef-CSScriptsLicense"
+license = "LicenseRef-CSScriptsLic"
 license-files = ["LICENSE.md"]
 classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: Other Environment",
+    "Framework :: Flake8",
+    "Framework :: Pytest",
+    "Framework :: tox",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: Other/Proprietary License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent"
+    "Topic :: File Formats",
+    "Topic :: Internet",
+    "Topic :: Multimedia",
+    "Topic :: Text Processing",
+    "Topic :: Utilities"
 ]
 keywords = [
     "apple",
