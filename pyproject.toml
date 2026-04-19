@@ -62,13 +62,13 @@ py-modules = [
     "cs.dateutils",
     "cs.deco",
     "cs.gimmicks",
-    "cs.lex",
+    "cs.lex", # Has tests
     "cs.logutils",
-    "cs.obj",
+    "cs.obj", # Has tests
     "cs.pfx",
     "cs.py.func",
-    "cs.py3",
-    "cs.seq",
+    "cs.py3._for3", # Has tests
+    "cs.seq", # Has tests
     "cs.sh",
     "cs.typingutils",
     "cs.x"
