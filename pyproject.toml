@@ -10,6 +10,7 @@ readme = "README.md"
 license = "LicenseRef-CSScriptsLicense"
 license-files = ["LICENSE.md"]
 classifiers = [
+    "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent"
 ]
@@ -41,27 +42,36 @@ Sourcehut = "https://hg.sr.ht/~cameron-simpson/css"
 Docs = "http://www.cskk.ezoshosting.com/cs/css/"
 Manual = "http://www.cskk.ezoshosting.com/cs/man/"
 BitBucket = "https://bitbucket.org/cameron_simpson/css/"
-GitHub = "https://github.com/cameron-simpson/css"
 Website = "http://www.cskk.ezoshosting.com/cs/"
+# Cameron's GitHub Source Repository - upstream-upstream
+GitHub = "https://github.com/cameron-simpson/css"
+# Mirror upstream-upstream to sync HSF Working with - upstream
+HSFGiteaUpstream = "https://git.hyrysoftwarefoundation.org/jhyry87/css"
+# For contributing to upstream-upstream - origin-collab
+HSFGitHubUpstream = "https://github.com/eljonny/css"
+# HSF Working Repo - Packaging and working on cs.app.osx.plist - origin
+HSFGitea = "https://git.hyrysoftwarefoundation.org/HyrySoftwareFoundation/css"
+# HSF Working - PyPI Package Registry
+HSFPyPI = "https://git.hyrysoftwarefoundation.org/HyrySoftwareFoundation/-/packages/pypi"
 
 [tool.setuptools]
 py-modules = [
     "cs.app.osx.plist",
-    "cs.logutils",
     "cs.ansi_colour",
-    "cs.gimmicks",
     "cs.context",
-    "cs.deco",
-    "cs.typingutils",
-    "cs.lex",
     "cs.dateutils",
+    "cs.deco",
+    "cs.gimmicks",
+    "cs.lex",
+    "cs.logutils",
     "cs.obj",
     "cs.pfx",
     "cs.py.func",
     "cs.py3",
     "cs.seq",
-    "cs.x",
-    "cs.sh"
+    "cs.sh",
+    "cs.typingutils",
+    "cs.x"
 ]
 
 [tool.setuptools.package-dir]

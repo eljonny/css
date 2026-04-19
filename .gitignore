@@ -3,6 +3,8 @@
 **/*.egg-info
 test.csv
 dist/
+.venv/
+.pytest_cache/
 
 # Add gitignore - fork hg -> git -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
