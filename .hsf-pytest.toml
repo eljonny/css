@@ -1,0 +1,23 @@
+[tool.pytest]
+minversion = "9.0"
+addopts = [
+    "-rA",
+    "-q",
+    "--showlocals",
+    "--tb=long",
+    "@.hsf-tests.list"
+]
+log_auto_indent = "true"
+log_date_format = "%Y-%m-%d %H:%M:%S"
+log_file = "logs/pytest-logs.txt"
+log_file_mode = "a"
+log_format = "%(asctime)s %(levelname)s %(message)s"
+log_level = "INFO"
+strict = true
+testpaths = [
+    "lib/python"
+]
+
+# Add .hsf-pytest.toml for package-specific testing -
+# Only run tests related to cs.app.osx.plist -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-18

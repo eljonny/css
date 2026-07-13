@@ -1,0 +1,29 @@
+env_list = [
+    { prefix = "3.", start = 8 },
+    "lint"
+]
+
+[env_run_base]
+description = "run the test suite with pytest"
+deps = [
+    "pytest>=9"
+]
+commands = [
+    ["pytest", "--config-file=.hsf-pytest.toml", { replace = "posargs", default = [], extend = true }]
+]
+
+[env.lint]
+description = "run linters"
+skip_install = true
+deps = [
+    "ruff",
+    "flake8"
+]
+commands = [
+    ["ruff", "check", { replace = "posargs", default = ["lib/python"], extend = true }],
+    ["flake8", { replace = "posargs", default = ["lib/python"], extend = true }]
+]
+
+# Add tox.toml for package testing and linting -
+# Make sure cs.app.osx.plist works across environments -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-19

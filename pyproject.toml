@@ -18,14 +18,12 @@ classifiers = [
     "Framework :: tox",
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
-    "License :: Other/Proprietary License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Topic :: File Formats",
     "Topic :: Internet",
-    "Topic :: Multimedia",
     "Topic :: Text Processing",
     "Topic :: Utilities"
 ]
