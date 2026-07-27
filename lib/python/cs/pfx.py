@@ -49,19 +49,17 @@ The main items supplied by this module are:
 # Add flake8 fixes - easy fixes -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
 
-from __future__ import print_function
-from contextlib import contextmanager
-from functools import partial
-from inspect import isclass, isgeneratorfunction
 import logging
 import sys
 import threading
 import traceback
+from contextlib import contextmanager
+from functools import partial
+from inspect import isclass, isgeneratorfunction
 
 from cs.deco import decorator, fmtdoc, logging_wrapper
-from cs.py.func import funcname, func_a_kw_fmt
-from cs.py3 import StringTypes, ustr, unicode
-
+from cs.py.func import func_a_kw_fmt, funcname
+from cs.py3 import StringTypes, unicode, ustr
 from cs.x import X
 
 __version__ = '20260912-post'
@@ -194,7 +192,7 @@ class _PfxThreadState(threading.local):
     return self.stack.pop()
 
 
-class Pfx(object):
+class Pfx:
   ''' A context manager to maintain a per-thread stack of message prefixes.
   '''
 
@@ -287,7 +285,7 @@ class Pfx(object):
     _state = self._state
     if exc_value is not None:
       try:
-        exc_value._pfx_prefix  # noqa: B018
+        exc_value._pfx_prefix
       except AttributeError:
         exc_value._pfx_prefix = self._state.prefix
         # prevent outer Pfx wrappers from hacking stuff as well
@@ -354,7 +352,7 @@ class Pfx(object):
       return text
 
   @classmethod
-  def prefixify_exception(cls, e):  # noqa: C901
+  def prefixify_exception(cls, e):
     ''' Modify the supplied exception `e` with the current prefix.
         The original value of some .attr is preserved as .{attr}_without_prefix.
         Return `True` if modified, `False` if unable to modify.
@@ -617,7 +615,9 @@ def PfxThread(target, **kw):
   ''' Factory function returning a `Thread`
       which presents the current prefix as context.
   '''
-  from cs.threads import HasThreadState  # pylint: disable=import-outside-toplevel
+  from cs.threads import (
+    HasThreadState,  # pylint: disable=import-outside-toplevel
+  )
 
   current_prefix = prefix()
 

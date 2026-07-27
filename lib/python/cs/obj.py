@@ -212,9 +212,9 @@ def as_dict(o, selector=None):
       and select attributes `attr` where `selector(attr)` is true.
   '''
   if selector is None:
-    match = lambda attr: attr and not attr.startswith('_') # noqa E731
+    match = lambda attr: attr and not attr.startswith('_')
   elif isinstance(selector, str):
-    match = lambda attr: attr.startswith(selector) # noqa E731
+    match = lambda attr: attr.startswith(selector)
   else:
     match = selector
   return {attr: getattr(o, attr) for attr in dir(o) if match(attr)}
@@ -587,6 +587,7 @@ class Sentinel:
   def __eq__(self, other):
     return self is other
 
+
 class Refreshable(ABC):
   ''' A mixin for refreshable objects.
       The object must provide a `_refresh()` method, returning
@@ -761,19 +762,29 @@ class Refreshable(ABC):
       else:
         if key in seen:
           return False
-      seen.add(key)
-    # we do not use the lock if there are data
-    lock = getattr(self, 'refresh_lock', None) if data is None else None
-    with contextif(lock):
-      if ratelimit is None:
-        # optional instance attribute
-        ratelimit = getattr(
-            self, 'refresh_ratelimit',
-            type(self).REFRESH_RATELIMIT
-        )
-      now = time.time()
-      do_refresh = True
-      was_updated = False
+    seen.add(key)
+    if ratelimit is None:
+      # optional instance attribute
+      ratelimit = getattr(
+          self, 'refresh_ratelimit',
+          type(self).REFRESH_RATELIMIT
+      )
+    now = time.time()
+    do_refresh = True
+    was_updated = False
+    if data is None:
+      if not force:
+        if not self.refresh_needed(lifespan=lifespan, now=now):
+          # not stale
+          do_refresh = False
+        elif ratelimit is not None:
+          # rate limit on polls
+          last_poll = getattr(self, 'refresh_last_poll', None)
+          if last_poll is not None and now - last_poll < ratelimit:
+            # too soon
+            do_refresh = False
+    if do_refresh:
+==== BASE ====
       if data is None:
         if not force:
           if not self.refresh_needed(lifespan=lifespan, now=now):

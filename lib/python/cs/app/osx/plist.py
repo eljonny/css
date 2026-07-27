@@ -6,16 +6,16 @@
 '''
 
 import base64
-from datetime import datetime, timezone
 import os
 import plistlib
 import shutil
 import subprocess
 import tempfile
+from datetime import datetime, timezone
 
+import cs.sh
 from cs.logutils import warning
 from cs.pfx import Pfx
-import cs.sh
 
 try:
   from lxml import etree
@@ -294,7 +294,7 @@ def resolve_object(objs, i):
 
 
 # pylint: disable=too-few-public-methods
-class ObjectClassDefinition(object):
+class ObjectClassDefinition:
   ''' A representation of a "class" object, used in `resolve_object()`
       for otherwise unrecognised objects which contain a `$classname` member.
   '''
@@ -309,7 +309,7 @@ class ObjectClassDefinition(object):
   __repr__ = __str__
 
 
-class ObjectClassInstance(object):
+class ObjectClassInstance:
   ''' A representation of a "class instance", used in `resolve_object()`
       for objects with a `$class` member.
   '''

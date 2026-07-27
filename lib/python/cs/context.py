@@ -7,8 +7,11 @@
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
 
 from contextlib import contextmanager
+
 try:
-  from contextlib import nullcontext  # pylint: disable=unused-import,ungrouped-imports
+  from contextlib import (
+    nullcontext,  # pylint: disable=unused-import,ungrouped-imports
+  )
 except ImportError:
 
   @contextmanager
@@ -17,8 +20,8 @@ except ImportError:
     '''
     yield None
 
-from functools import partial
 import signal
+from functools import partial
 from typing import Callable, Iterable
 
 from cs.deco import decorator
@@ -102,13 +105,12 @@ def contextif(cmgr, *cmgr_args, **cmgr_kwargs):
   '''
   if callable(cmgr):
     flag = True
+  elif isinstance(cmgr, bool):
+    flag = cmgr
+    cmgr = cmgr_args[0]
+    cmgr_args = cmgr_args[1:]
   else:
-    if isinstance(cmgr, bool):
-      flag = cmgr
-      cmgr = cmgr_args[0]
-      cmgr_args = cmgr_args[1:]
-    else:
-      flag = bool(cmgr)
+    flag = bool(cmgr)
   if flag:
     if callable(cmgr):
       cmgr = cmgr(*cmgr_args, **cmgr_kwargs)
@@ -383,7 +385,7 @@ def twostep(cmgr):
           @contextmanager
           def my_cmgr_func(...):
               ...
-              yield
+              yield:
               ...
 
       then `my_cmgr_func(...)` returns a context manager instance
@@ -439,7 +441,7 @@ def setup_cmgr(cmgr):
           @contextmanager
           def my_cmgr_func(...):
               ...
-              yield
+              yield:
               ...
 
       then the correct use of `setup_cmgr()` is:

@@ -5,7 +5,6 @@
 #   - Cameron Simpson <cs@cskk.id.au> 12nov2015
 #
 
-from builtins import bytes
 
 DISTINFO = {
     'description':

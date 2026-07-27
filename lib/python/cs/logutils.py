@@ -46,30 +46,31 @@ Basic logging from anywhere:
 # Add flake8 fixes - easy fixes, remove unused imports -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
 
-from __future__ import with_statement
 import codecs
 from contextlib import contextmanager
+
 try:
   import importlib
 except ImportError:
   importlib = None
 import logging
-from logging import Formatter, StreamHandler
 import os
 import os.path
 import stat
 import sys
-from threading import Lock
 import time
 import traceback
+from logging import Formatter, StreamHandler
+from threading import Lock
 from types import SimpleNamespace as NS
 
+import cs.pfx
 from cs.ansi_colour import colourise, env_no_color
 from cs.context import stackattrs
-from cs.deco import fmtdoc, logging_wrapper, verbose as v, vv
+from cs.deco import fmtdoc, logging_wrapper, vv
+from cs.deco import verbose as v
 from cs.lex import is_dotted_identifier
-import cs.pfx
-from cs.pfx import Pfx, XP
+from cs.pfx import XP, Pfx
 
 __version__ = '20260912-post'
 
@@ -225,7 +226,7 @@ class LoggingState(NS):
     # determine some attributes of main_log
     try:
       fd = main_log.fileno()
-    except (AttributeError, IOError):
+    except (OSError, AttributeError):
       is_fifo = False
       # is_reg = False                        # unused
       is_tty = False
@@ -318,6 +319,7 @@ class LoggingState(NS):
       # do a thread dump to the main_log on SIGHUP
       # pylint: disable=import-outside-toplevel
       import signal
+
       from cs.debug import thread_dump
 
       # pylint: disable=unused-argument
@@ -372,7 +374,7 @@ class PfxFormatter(Formatter):
         to the global `cmd` and `Pfx` context prefix respectively,
         then call `Formatter.format`.
     '''
-    record.cmd = self.cmd if self.cmd else cs.pfx.cmd
+    record.cmd = self.cmd or cs.pfx.cmd
     record.pfx = Pfx._state.prefix
     try:
       s = Formatter.format(self, record)
@@ -713,7 +715,7 @@ def upd(msg, *args, **kwargs):
 
 
 # pylint: disable=too-many-instance-attributes
-class LogTime(object):
+class LogTime:
   ''' LogTime is a context manager that logs the elapsed time of the enclosed
       code. After the run, the field .elapsed contains the elapsed time in
       seconds.
@@ -836,7 +838,7 @@ if __name__ == '__main__':
 
   @logging_wrapper
   def test_warning(msg, *a, **kw):
-    'test function for warning'
+    'Test function for warning'
     warning(msg, *a, **kw)
 
   setup_logging(

@@ -15,16 +15,24 @@ in the course of its function.
 # Add flake8 fixes - easy fixes; suppress E731 where appropriate -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
 
+import itertools
 from builtins import range as builtin_range
 from heapq import heappop, heappush
-import itertools
-from threading import Lock, Condition, Thread
+from threading import Condition, Lock, Thread
 from typing import (
-    Any, Callable, GenericAlias, Generator, Hashable, Iterable, Iterator,
-    Optional, Tuple, TypeVar
+  Any,
+  Callable,
+  Generator,
+  GenericAlias,
+  Hashable,
+  Iterable,
+  Iterator,
+  Optional,
+  Tuple,
+  TypeVar,
 )
 
-from cs.deco import decorator, OBSOLETE
+from cs.deco import OBSOLETE, decorator
 from cs.gimmicks import warning
 from cs.typingutils import Sortable
 
@@ -56,7 +64,7 @@ class Seq:
       the next number in the sequence.
   '''
 
-  __slots__ = ('counter', '_lock')
+  __slots__ = ('_lock', 'counter')
 
   def __init__(self, start=0, lock=None):
     if lock is None:
@@ -557,7 +565,7 @@ def unrepeated(it, seen=None, signature=None):
   if seen is None:
     seen = set()
   if signature is None:
-    signature = lambda item: item # noqa E731
+    signature = lambda item: item
   for item in it:
     sig = signature(item)
     if sig in seen:
@@ -1076,5 +1084,6 @@ def with_neighbours(it: Iterable, no_neighbour=None):
 
 if __name__ == '__main__':
   import sys
+
   import cs.seq_tests
   cs.seq_tests.selftest(sys.argv)

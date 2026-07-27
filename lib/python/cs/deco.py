@@ -15,12 +15,12 @@ Assorted function decorators.
 # is what E129 indicates -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
 
-from collections import defaultdict
-from contextlib import contextmanager
-from inspect import isgeneratorfunction, ismethod, signature, Parameter
 import sys
 import traceback
 import typing
+from collections import defaultdict
+from contextlib import contextmanager
+from inspect import Parameter, isgeneratorfunction, ismethod, signature
 
 from cs.gimmicks import warning
 from cs.typingutils import is_optional
@@ -326,7 +326,7 @@ def contextdecorator(cmgrfunc):
           def genuser(genfunc, *a, **kw):
               user = caller(-4)
               print(f"iterate over {genfunc}(*{a!r},**{kw!r}) from {user}")
-              yield
+              yield:
 
           @genuser
           def linesof(filename):
@@ -1158,7 +1158,7 @@ def promote(func, params=None, types=None):
     arg_mapping = bound_args.arguments
     # we don't import cs.pfx (many dependencies!)
     # pylint: disable=unnecessary-lambda-assignment
-    get_context = lambda: ( # noqa E731
+    get_context = lambda: (
         "@promote(%s.%s)(%s=%s:%r)" % (
             func.__module__,
             func.__name__,
@@ -1229,7 +1229,7 @@ def promote(func, params=None, types=None):
       except TypeError:
         # promotion fails
         if (optional and arg_value is param.default and
-            param.default is not Parameter.empty): # noqa E129
+            param.default is not Parameter.empty):
           # allow omitted/unconverted optional value with default None
           continue
         raise

@@ -53,7 +53,9 @@ def funccite(func):
   except AttributeError:
     return "%s[no.__code__]" % (repr(func),)
   try:
-    from cs.fs import shortpath  # pylint: disable=import-outside-toplevel
+    from cs.fs import (
+      shortpath,  # pylint: disable=import-outside-toplevel
+    )
   except ImportError:
     shortpath = lambda p: p  # pylint: disable=unnecessary-lambda-assignment
   return "%s[%s:%d]" % (

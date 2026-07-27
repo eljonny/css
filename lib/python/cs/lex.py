@@ -22,24 +22,33 @@ raising `ValueError` on failed tokenisation.
 # pylint: disable=too-many-lines
 
 import binascii
+import os
+import re
+import sys
 from collections.abc import Mapping as MappingABC
 from dataclasses import dataclass
 from functools import partial
 from json import JSONEncoder
-import os
 from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 from string import (
-    ascii_letters,
-    ascii_uppercase,
-    digits,
-    printable,
-    whitespace,
-    Formatter,
+  Formatter,
+  ascii_letters,
+  ascii_uppercase,
+  digits,
+  printable,
+  whitespace,
 )
-import sys
 from textwrap import dedent
-from typing import Any, Callable, Iterable, Mapping, Optional, Tuple, Union
+from typing import (
+  Any,
+  Callable,
+  Iterable,
+  Mapping,
+  Optional,
+  Tuple,
+  Union,
+)
 
 from dateutil.tz import tzlocal
 from icontract import require
@@ -51,7 +60,10 @@ from cs.gimmicks import warning
 from cs.obj import public_subclasses
 from cs.pfx import Pfx, pfx_call, pfx_method
 from cs.py.func import funcname
-from cs.seq import common_prefix_length, common_suffix_length
+from cs.seq import (
+  common_prefix_length,
+  common_suffix_length,
+)
 
 __version__ = '20261016-post'
 
@@ -1012,7 +1024,7 @@ def get_sloshed_text(
     while offset < slen:
       c = s[offset]
       if (c == slosh or (delim is not None and c == delim) or
-          (specials is not None and c in special_starts)): # noqa E129
+          (specials is not None and c in special_starts)):
         break
       offset += 1
     chunks.append(s[offset0:offset])

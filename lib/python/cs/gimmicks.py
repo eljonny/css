@@ -47,10 +47,11 @@ except ImportError:
     '''
     yield None
 
-from io import UnsupportedOperation
 import os
 import stat
 import subprocess
+from io import UnsupportedOperation
+
 try:
   DEVNULL = subprocess.DEVNULL
 except AttributeError:
@@ -63,7 +64,7 @@ try:
 except ImportError:
 
   # pylint: disable=too-few-public-methods
-  class SimpleNamespace(object):
+  class SimpleNamespace:
     ''' A tiny workalike for types.SimpleNamespace.
     '''
 

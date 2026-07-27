@@ -15,9 +15,11 @@ to strings for colour highlighting of output.
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
 
 import os
-from os.path import basename, exists as existspath, join as joinpath
 import re
 import sys
+from os.path import basename
+from os.path import exists as existspath
+from os.path import join as joinpath
 
 from cs.gimmicks import warning
 
@@ -202,7 +204,7 @@ def make_pattern(pattern, default_colour=None):
       colour = None
       regexp = pattern
   if isinstance(regexp, str):
-    regexp = re.compile(regexp, re.I)
+    regexp = re.compile(regexp, re.IGNORECASE)
   if not colour:
     colour = default_colour
   return colour, regexp

@@ -6,7 +6,7 @@
 # Add flake8 fixes - easy fixes -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
 
-from typing import get_args, get_origin, Protocol, TypeVar, Union
+from typing import Protocol, TypeVar, Union, get_args, get_origin
 
 __version__ = '20260525-post'
 

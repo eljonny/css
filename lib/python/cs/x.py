@@ -86,7 +86,7 @@ X_default_colour = os.environ.get('CS_X_COLOUR')
 
 
 # pylint: disable=too-many-branches
-def X(msg, *args, file=None, colour=None):  # noqa: N802
+def X(msg, *args, file=None, colour=None):
   ''' Unconditionally write the message `msg`.
 
       If there are positional arguments after `msg`,
@@ -182,7 +182,7 @@ if os.environ.get('CS_X_BUILTIN', ''):
     builtins.X = X
 
 
-def Y(msg, *a, **kw):  # noqa: N802
+def Y(msg, *a, **kw):
   ''' Wrapper for `X()` rendering in yellow.
   '''
   X(msg, *a, colour='yellow', **kw)
