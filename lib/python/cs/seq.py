@@ -39,20 +39,20 @@ from cs.typingutils import Sortable
 __version__ = '20260912-post'
 
 DISTINFO = {
-    'description':
-    "Stuff to do with counters, sequences and iterables.",
-    'keywords': ["python2", "python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': [
-        'cs.deco',
-        'cs.gimmicks',
-        'cs.typingutils',
-    ],
-    'python_requires':
-    '>=3',
+  'description':
+  "Stuff to do with counters, sequences and iterables.",
+  'keywords': ["python2", "python3"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': [
+    'cs.deco',
+    'cs.gimmicks',
+    'cs.typingutils',
+  ],
+  'python_requires':
+  '>=3',
 }
 
 
@@ -64,7 +64,8 @@ class Seq:
       the next number in the sequence.
   '''
 
-  __slots__ = ('_lock', 'counter')
+  # Do not allow autofixing and linting the ordering of the slots tuple
+  __slots__ = ('counter', '_lock')  # noqa: RUF023
 
   def __init__(self, start=0, lock=None):
     if lock is None:
@@ -106,7 +107,7 @@ def the(iterable, context=None):
       is_first = False
     else:
       raise IndexError(
-          "%s: got more than one element (%s, %s, ...)" % (icontext, it, elem)
+        "%s: got more than one element (%s, %s, ...)" % (icontext, it, elem)
       )
   if is_first:
     raise IndexError("%s: got no elements" % (icontext,))
@@ -143,6 +144,7 @@ def get0(iterable, default=None):
     return default
   return i
 
+
 def consume(it: Iterator, last_item=lambda _: False, *, no_items=None):
   ''' Consume the iterator `it`.
       If `last_item(item)` is true for some `item` from the iterator,
@@ -155,6 +157,7 @@ def consume(it: Iterator, last_item=lambda _: False, *, no_items=None):
     if last_item(item):
       return item
   return no_items
+
 
 def consumed(it: Iterator, last_item=lambda _: False) -> Generator:
   ''' Consume the iterator `it`, a variation on `consume()`.
@@ -170,6 +173,8 @@ def consumed(it: Iterator, last_item=lambda _: False) -> Generator:
     return
   yield last_item
   yield from it
+
+
 def tee(iterable, *Qs):
   ''' A generator yielding the items from an iterable
       which also copies those items to a series of queues.
@@ -457,6 +462,7 @@ class StatefulIterator:
     self.state = new_state
     return item
 
+
 class ReIterable(Iterable):
   ''' A thread safe clone of some orginal iterator.
 
@@ -504,8 +510,11 @@ class ReIterable(Iterable):
       yield item
       i += 1
 
+
 # better name suggested by λambda @ python.discord
 ClonedIterator = OBSOLETE(ReIterable)
+
+
 def splitoff(sq, *sizes):
   ''' Split a sequence into (usually short) prefixes and a tail,
       for example to construct subdirectory trees based on a UUID.
@@ -530,8 +539,8 @@ def splitoff(sq, *sizes):
     end_offset = offset + size
     if end_offset >= len(sq):
       raise ValueError(
-          "size:%s consumes up to or beyond"
-          " the end of the sequence (length %d)" % (size, len(sq))
+        "size:%s consumes up to or beyond"
+        " the end of the sequence (length %d)" % (size, len(sq))
       )
     parts.append(sq[offset:end_offset])
     offset = end_offset
@@ -751,8 +760,8 @@ def skip_map(func, *iterables, except_types, quiet=False):
   '''
   if not isinstance(except_types, tuple):
     raise TypeError(
-        "except types must be a tuple of exception types but has type %s" %
-        (type(except_types),)
+      "except types must be a tuple of exception types but has type %s" %
+      (type(except_types),)
     )
   for iterable in iterables:
     for item in iterable:
@@ -760,7 +769,7 @@ def skip_map(func, *iterables, except_types, quiet=False):
         yield func(item)
       except except_types as e:
         quiet or warning(
-            "skip_map(func=%s): item=%s: skip exception: %s", func, item, e
+          "skip_map(func=%s): item=%s: skip exception: %s", func, item, e
         )
 
 
@@ -814,8 +823,8 @@ def infill_from_batches(
     existing_keys: Callable[[_infill_T], _infill_K],
     all: Optional[bool] = False,
     amend_batch: Optional[Callable[
-        [Iterable[_infill_T]],
-        Iterable[_infill_T],
+      [Iterable[_infill_T]],
+      Iterable[_infill_T],
     ]] = lambda obj_batch: obj_batch,
 ):
   ''' A batched version of `infill(objs)` accepting an iterable of
@@ -842,7 +851,7 @@ def infill_from_batches(
   '''
   for objs in map(amend_batch, objss):
     yield from infill(
-        objs, obj_keys=obj_keys, existing_keys=existing_keys, all=all
+      objs, obj_keys=obj_keys, existing_keys=existing_keys, all=all
     )
 
 
@@ -948,7 +957,7 @@ class range:
         step = 1
       if stop is not None:
         return builtin_range(
-            self.start + start, self.start + stop, self.step * step
+          self.start + start, self.start + stop, self.step * step
         )
       return self.__class__(self.start + start, ..., self.step * step)
     raise TypeError(repr(type(index)))
@@ -969,6 +978,7 @@ class range:
     while True:
       yield i
       i += self.step
+
 
 class Ordered:
   ''' A class to yield indexed but out of order values in index
@@ -1009,8 +1019,8 @@ class Ordered:
     heappush(self.heap, (index, value))
     # This contortion is to infer == by excluding < and >
     # thus requiring only < support in the indices.
-    while self.heap and (not self.heap[0][0] < self.next_index
-                         and not self.next_index < self.heap[0][0]):
+    while self.heap and (not self.heap[0][0] < self.next_index and
+                         not self.next_index < self.heap[0][0]):
       index, value = heappop(self.heap)
       self.next_index = next(self.indices)
       yield index, value
@@ -1020,6 +1030,7 @@ class Ordered:
     '''
     while self.heap:
       yield heappop(self.heap)
+
 
 def order(
     indexed_items: Iterable[Tuple[Sortable, Any]],
@@ -1043,6 +1054,8 @@ def order(
   for i, item in indexed_items:
     yield from ordered.push(i, item)
   yield from ordered.drain()
+
+
 def with_neighbours(it: Iterable, no_neighbour=None):
   ''' Return 3-tuples of `(prev,curr,next)` from the iterable `it`
       where `curr` is each item from `it` and `prev` and `next` are

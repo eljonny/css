@@ -110,5 +110,5 @@ indent-style = "space"
 quote-style = "preserve"
 
 # Add .hsf-ruff.toml for package-specific linting -
-# Only run linter related to cs.app.osx.plist -
+# Only run linter on files related to cs.app.osx.plist -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-07-26
