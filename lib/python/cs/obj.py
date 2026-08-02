@@ -13,6 +13,7 @@ Convenience facilities for objects.
 # what I would need to change if this type name were to change -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
 from collections import defaultdict
+from collections.abc import Iterable
 from copy import copy as copy0
 from functools import partial
 import sys

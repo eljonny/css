@@ -21,8 +21,8 @@ except ImportError:
     yield None
 
 import signal
+from collections.abc import Callable, Iterable
 from functools import partial
-from typing import Callable, Iterable
 
 from cs.deco import decorator
 from cs.gimmicks import error

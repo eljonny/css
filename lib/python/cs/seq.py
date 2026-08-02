@@ -17,18 +17,18 @@ in the course of its function.
 
 import itertools
 from builtins import range as builtin_range
+from collections.abc import (
+  Callable,
+  Generator,
+  Hashable,
+  Iterable,
+  Iterator,
+)
 from heapq import heappop, heappush
 from threading import Condition, Lock, Thread
 from typing import (
   Any,
-  Callable,
-  Generator,
   GenericAlias,
-  Hashable,
-  Iterable,
-  Iterator,
-  Optional,
-  Tuple,
   TypeVar,
 )
 
@@ -784,8 +784,8 @@ def infill(
     *,
     obj_keys: Callable[[_infill_T], _infill_K],
     existing_keys: Callable[[_infill_T], _infill_K],
-    all: Optional[bool] = False,
-) -> Iterable[Tuple[_infill_T, _infill_K]]:
+    all: bool | None = False,
+) -> Iterable[tuple[_infill_T, _infill_K]]:
   ''' A generator accepting an iterable of objects
       which yields `(obj,missing_keys)` 2-tuples
       indicating missing records requiring infill for each object.
@@ -821,11 +821,8 @@ def infill_from_batches(
     *,
     obj_keys: Callable[[_infill_T], _infill_K],
     existing_keys: Callable[[_infill_T], _infill_K],
-    all: Optional[bool] = False,
-    amend_batch: Optional[Callable[
-      [Iterable[_infill_T]],
-      Iterable[_infill_T],
-    ]] = lambda obj_batch: obj_batch,
+    all: bool | None = False,
+    amend_batch: Callable[[Iterable[_infill_T]], Iterable[_infill_T]] | None = lambda obj_batch: obj_batch,
 ):
   ''' A batched version of `infill(objs)` accepting an iterable of
       batches of objects which yields `(obj,obj_key)` 2-tuples
@@ -1010,7 +1007,7 @@ class Ordered:
     self.indices = iter(indices)
     self.next_index = next(self.indices)
 
-  def push(self, index, value) -> Generator[Tuple[Sortable, Any], None, None]:
+  def push(self, index, value) -> Generator[tuple[Sortable, Any], None, None]:
     ''' A generator to push an (index,value) 2-tuple onto the heap
         and then yield (index,value) 2-tuples from the heap while it
         is not empty and the top element equals the expected next index
@@ -1025,7 +1022,7 @@ class Ordered:
       self.next_index = next(self.indices)
       yield index, value
 
-  def drain(self) -> Generator[Tuple[Sortable, Any], None, None]:
+  def drain(self) -> Generator[tuple[Sortable, Any], None, None]:
     ''' A generator yielding (index,value) 2-tuples from the heap until it is empty.
     '''
     while self.heap:
@@ -1033,9 +1030,9 @@ class Ordered:
 
 
 def order(
-    indexed_items: Iterable[Tuple[Sortable, Any]],
+    indexed_items: Iterable[tuple[Sortable, Any]],
     indices: Iterable[Sortable] = None
-) -> Generator[Tuple[Sortable, Any], None, None]:
+) -> Generator[tuple[Sortable, Any], None, None]:
   ''' A convenience wrapper for an `Ordered` instance to order the `indexed_items`.
 
       Example:

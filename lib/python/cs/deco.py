@@ -614,10 +614,9 @@ def strable(func, open_func=None):
 
     def accepts_str(arg, *a, **kw):
       if isinstance(arg, str):
-        with Pfx(arg):
-          with open_func(arg) as opened:
-            for item in func(opened, *a, **kw):
-              yield item
+        with Pfx(arg), open_func(arg) as opened:
+          for item in func(opened, *a, **kw):
+            yield item
       else:
         for item in func(arg, *a, **kw):
           yield item
@@ -625,9 +624,8 @@ def strable(func, open_func=None):
 
     def accepts_str(arg, *a, **kw):
       if isinstance(arg, str):
-        with Pfx(arg):
-          with open_func(arg) as opened:
-            return func(opened, *a, **kw)
+        with Pfx(arg), open_func(arg) as opened:
+          return func(opened, *a, **kw)
       return func(arg, *a, **kw)
 
   return accepts_str
@@ -941,9 +939,8 @@ def uses_cmd_options(
         option_value = option_default
       option_updates[option_name] = option_value
     func_kw.update(option_updates)
-    with stackattrs(options, **option_updates):
-      with options:
-        return func(*func_a, **func_kw)
+    with stackattrs(options, **option_updates), options:
+      return func(*func_a, **func_kw)
 
   return uses_cmd_wrapper
 

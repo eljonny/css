@@ -25,6 +25,7 @@ import binascii
 import os
 import re
 import sys
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from collections.abc import Mapping as MappingABC
 from dataclasses import dataclass
 from functools import partial
@@ -188,7 +189,7 @@ def typed_str(
     *,
     use_cls: bool = False,
     use_repr: bool = False,
-    max_length: Optional[int] = 32,
+    max_length: int | None = 32,
 ) -> str:
   ''' Return "type(obj).__name__:str(obj)" for some object `obj`.
       This is available as both `typed_str` and `s`.
@@ -219,7 +220,7 @@ s = typed_str
 
 def typed_repr(
     obj: Any,
-    max_length: Optional[int] = None,
+    max_length: int | None = None,
     *,
     use_cls: bool = False
 ) -> str:
@@ -295,7 +296,7 @@ def texthexify(
     bs: bytes,
     shiftin: str = '[',
     shiftout: str = ']',
-    whitelist: Optional[Union[str, bytes]] = None
+    whitelist: str | bytes | None = None
 ) -> str:
   ''' Transcribe the bytes `bs` to text using compact text runs for
       some common text values.
@@ -428,7 +429,7 @@ def untexthexify(s: str, shiftin: str = '[', shiftout: str = ']') -> bytes:
 
 
 # pylint: disable=redefined-outer-name
-def get_chars(s: str, offset: int, gochars: str) -> Tuple[str, int]:
+def get_chars(s: str, offset: int, gochars: str) -> tuple[str, int]:
   ''' Scan the string `s` for characters in `gochars` starting at `offset`.
       Return `(match,new_offset)`.
 
@@ -446,7 +447,7 @@ def get_chars(s: str, offset: int, gochars: str) -> Tuple[str, int]:
 
 
 # pylint: disable=redefined-outer-name
-def get_white(s: str, offset: int = 0) -> Tuple[str, int]:
+def get_white(s: str, offset: int = 0) -> tuple[str, int]:
   ''' Scan the string `s` for characters in `string.whitespace`
       starting at `offset` (default `0`).
       Return `(match,new_offset)`.
@@ -538,10 +539,10 @@ def stripped_dedent(
 def get_prefix_n(
     s: str,
     prefix: str,
-    n: Optional[int] = None,
+    n: int | None = None,
     *,
     offset: int = 0,
-) -> Tuple[Union[str, None], Union[int, None], int]:
+) -> tuple[str | None, int | None, int]:
   ''' Strip a leading `prefix` and numeric value `n` from the string `s`
       starting at `offset` (default `0`).
       Return the matched prefix, the numeric value and the new offset.
@@ -630,8 +631,8 @@ def get_suffix_part(
     s: str,
     *,
     keywords: Iterable[str] = ('part',),
-    numeral_map: Optional[Mapping[str, int]] = None,
-) -> Union[Tuple[str, int], Tuple[None, None]]:
+    numeral_map: Mapping[str, int] | None = None,
+) -> tuple[str, int] | tuple[None, None]:
   ''' Strip a trailing "part N" suffix from the string `s`.
       Return the matched suffix and the number part number.
       Retrn `(None,None)` on no match.
@@ -680,7 +681,7 @@ def get_suffix_part(
 
 
 # pylint: disable=redefined-outer-name
-def get_nonwhite(s: str, offset: int = 0) -> Tuple[str, int]:
+def get_nonwhite(s: str, offset: int = 0) -> tuple[str, int]:
   ''' Scan the string `s` for characters not in `string.whitespace`
       starting at `offset` (default `0`).
       Return `(match,new_offset)`.
@@ -689,7 +690,7 @@ def get_nonwhite(s: str, offset: int = 0) -> Tuple[str, int]:
 
 
 # pylint: disable=redefined-outer-name
-def get_decimal(s: str, offset: int = 0) -> Tuple[str, int]:
+def get_decimal(s: str, offset: int = 0) -> tuple[str, int]:
   ''' Scan the string `s` for decimal characters starting at `offset` (default `0`).
       Return `(dec_string,new_offset)`.
   '''
@@ -697,7 +698,7 @@ def get_decimal(s: str, offset: int = 0) -> Tuple[str, int]:
 
 
 # pylint: disable=redefined-outer-name
-def get_decimal_value(s: str, offset: int = 0) -> Tuple[int, int]:
+def get_decimal_value(s: str, offset: int = 0) -> tuple[int, int]:
   ''' Scan the string `s` for a decimal value starting at `offset` (default `0`).
       Return `(value,new_offset)`.
   '''
@@ -708,7 +709,7 @@ def get_decimal_value(s: str, offset: int = 0) -> Tuple[int, int]:
 
 
 # pylint: disable=redefined-outer-name
-def get_hexadecimal(s: str, offset: int = 0) -> Tuple[str, int]:
+def get_hexadecimal(s: str, offset: int = 0) -> tuple[str, int]:
   ''' Scan the string `s` for hexadecimal characters starting at `offset` (default `0`).
       Return `(hex_string,new_offset)`.
   '''
@@ -716,7 +717,7 @@ def get_hexadecimal(s: str, offset: int = 0) -> Tuple[str, int]:
 
 
 # pylint: disable=redefined-outer-name
-def get_hexadecimal_value(s: str, offset: int = 0) -> Tuple[int, int]:
+def get_hexadecimal_value(s: str, offset: int = 0) -> tuple[int, int]:
   ''' Scan the string `s` for a hexadecimal value starting at `offset` (default `0`).
       Return `(value,new_offset)`.
   '''
@@ -729,7 +730,7 @@ def get_hexadecimal_value(s: str, offset: int = 0) -> Tuple[int, int]:
 # pylint: disable=redefined-outer-name
 def get_decimal_or_float_value(s: str,
                                offset: int = 0
-                               ) -> Tuple[Union[int, float], int]:
+                               ) -> tuple[int | float, int]:
   ''' Fetch a decimal or basic float (nnn.nnn) value
       from the str `s` at `offset` (default `0`).
       Return `(value,new_offset)`.
@@ -750,7 +751,7 @@ def get_identifier(
     alpha: str = ascii_letters,
     number: str = digits,
     extras: str = '_',
-) -> Tuple[str, int]:
+) -> tuple[str, int]:
   ''' Scan the string `s` for an identifier (by default an ASCII
       letter or underscore followed by letters, digits or underscores)
       starting at `offset` (default 0).
@@ -793,7 +794,7 @@ def get_uc_identifier(
     offset: int = 0,
     number: str = digits,
     extras: str = '_',
-) -> Tuple[str, int]:
+) -> tuple[str, int]:
   ''' Scan the string `s` for an identifier as for `get_identifier`,
       but require the letters to be uppercase.
   '''
@@ -811,7 +812,7 @@ def is_uc_identifier(s: str, offset: int = 0, **kw) -> bool:
 
 
 # pylint: disable=redefined-outer-name
-def get_dotted_identifier(s: str, offset: int = 0, **kw) -> Tuple[str, int]:
+def get_dotted_identifier(s: str, offset: int = 0, **kw) -> tuple[str, int]:
   ''' Scan the string `s` for a dotted identifier (by default an
       ASCII letter or underscore followed by letters, digits or
       underscores) with optional trailing dot and another dotted
@@ -846,7 +847,7 @@ def is_dotted_identifier(s: str, offset: int = 0, **kw) -> bool:
 # pylint: disable=redefined-outer-name
 def get_other_chars(s: str,
                     offset: int = 0,
-                    stopchars: Optional[str] = None) -> Tuple[str, int]:
+                    stopchars: str | None = None) -> tuple[str, int]:
   ''' Scan the string `s` for characters not in `stopchars` starting
       at `offset` (default `0`).
       Return `(match,new_offset)`.
@@ -1468,7 +1469,7 @@ def cropped_repr(obj, roffset=1, max_length=32, inner_max_length=None):
 
 
 # pylint: disable=redefined-outer-name
-def get_ini_clausename(s: str, offset: int = 0) -> Tuple[str, int]:
+def get_ini_clausename(s: str, offset: int = 0) -> tuple[str, int]:
   ''' Parse a `[`*clausename*`]` string from `s` at `offset` (default `0`).
       Return `(clausename,new_offset)`.
   '''
@@ -1487,7 +1488,7 @@ def get_ini_clausename(s: str, offset: int = 0) -> Tuple[str, int]:
 
 
 # pylint: disable=redefined-outer-name
-def get_ini_clause_entryname(s: str, offset: int = 0) -> Tuple[str, str, int]:
+def get_ini_clause_entryname(s: str, offset: int = 0) -> tuple[str, str, int]:
   ''' Parse a `[`*clausename*`]`*entryname* string
       from `s` at `offset` (default `0`).
       Return `(clausename,entryname,new_offset)`.
@@ -1568,7 +1569,7 @@ def snakecase(camelcased: str) -> str:
 
 
 @OBSOLETE('cs.fs.RemotePath.from_str')
-def split_remote_path(remotepath: str) -> Tuple[Union[str, None], str]:
+def split_remote_path(remotepath: str) -> tuple[str | None, str]:
   ''' Split a path with an optional leading `[user@]rhost:` prefix
       into the prefix and the remaining path.
       `None` is returned for the prefix is there is none.
@@ -1645,7 +1646,7 @@ def format_as(
     formatter=None,
     *,
     error_sep=None,
-    missing: Optional[Callable[[Mapping, Any], Any]] = None,
+    missing: Callable[[Mapping, Any], Any] | None = None,
     strict=False,
 ):
   ''' Format the string `format_s` using `Formatter.vformat`,
@@ -1920,7 +1921,7 @@ class FormatMapping(MappingABC):
       self,
       obj,
       base_format_mapping: Mapping,
-      missing: Optional[Callable[[Mapping, Any], Any]] = None,
+      missing: Callable[[Mapping, Any], Any] | None = None,
       *,
       strict=True,
   ):
@@ -2071,7 +2072,7 @@ class FormatableMixin(FormatableFormatter):  # pylint: disable=too-few-public-me
     return super().convert_field(value, conversion)
 
   @pfx_method
-  def convert_via_method_or_attr(self, format_spec) -> Tuple[Any, int]:
+  def convert_via_method_or_attr(self, format_spec) -> tuple[Any, int]:
     ''' Apply a method or attribute name based conversion to `self`
         where `format_spec` starts with a method or attribute name.
         Return `(converted,offset)`
@@ -2131,8 +2132,8 @@ class FormatableMixin(FormatableFormatter):  # pylint: disable=too-few-public-me
       self,
       format_s: str,
       *,
-      error_sep: Optional[str] = None,
-      missing: Optional[Callable[[Mapping, Any], Any]] = None,
+      error_sep: str | None = None,
+      missing: Callable[[Mapping, Any], Any] | None = None,
       strict=True,
       **format_kwargs_kw,
   ):
@@ -2326,7 +2327,7 @@ class BaseToken(Promotable):
             text: str,
             offset: int = 0,
             *,
-            skip=False) -> Tuple["BaseToken", int]:
+            skip=False) -> tuple["BaseToken", int]:
     ''' Parse a token from `test` at `offset` (default `0`).
         Return a `BaseToken` subclass instance.
         Raise `SyntaxError` if no subclass parses it.
@@ -2417,7 +2418,7 @@ class Identifier(CoreTokens, BaseToken):
             text: str,
             offset: int = 0,
             *,
-            skip=False) -> Tuple[str, CoreTokens, int]:
+            skip=False) -> tuple[str, CoreTokens, int]:
     ''' Parse a dotted identifier from `test`.
     '''
     if skip:
@@ -2441,7 +2442,7 @@ class NumericValue(_LiteralValue, BaseToken):
   ''' An `int` or `float` literal.
   '''
 
-  value: Union[int, float]
+  value: int | float
 
   # anything this matches should be a valid Python int/float
   _token_re = re.compile(r'[-+]?\d+(\.\d*([eE]-?\d+)?)?')
