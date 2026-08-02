@@ -19,5 +19,5 @@ testpaths = [
 ]
 
 # Add .hsf-pytest.toml for package-specific testing -
-# Only run tests related to cs.app.osx.plist -
+# Only run tests related to cs.app.osx.plist via .hsf-tests.list file -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-18

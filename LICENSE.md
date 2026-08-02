@@ -27,3 +27,6 @@ that:
 ## Contact
 
 [Email: cs@cskk.id.au](mailto:cs@cskk.id.au)
+
+[//]: # (Extract LICENSE from README for pyproject -)
+[//]: # (Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05)

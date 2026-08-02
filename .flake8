@@ -12,7 +12,12 @@ exclude =
     dist,
     logs,
     **/__pycache__,
-    **/*.egg-info
+    **/*.egg-info,
+    hsf-coverage,
+    hsf-cs.app.osx.plist-coverage.lcov,
+    hsf-cs.app.osx.plist-coverage.json,
+    hsf-cs.app.osx.plist-coverage.xml,
+    .hsf-coverage
 
 filename =
     lib/python/cs/app/osx/plist.py,

@@ -14,6 +14,11 @@ html/manuals/
 state/
 state3/
 venv/
+hsf-coverage/
+hsf-cs.app.osx.plist-coverage.lcov
+hsf-cs.app.osx.plist-coverage.json
+hsf-cs.app.osx.plist-coverage.xml
+.hsf-coverage
 
 # Add gitignore - fork hg -> git -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29

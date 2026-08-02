@@ -1,23 +1,27 @@
+# Cameron Simpson's Scripts
+
 This a mirror of my personal kit,
 containing thousands of scripts and hundreds of Python modules
 and assorted other code.
+
 - Cameron Simpson &lt;<cs@cskk.id.au>&gt;, <a rel="me" href="https://aus.social/@cs">Mastodon:&commat;&zwj;cs&zwj;&commat;&zwj;aus.social</a>, <a href="https://pypi.org/user/cameron.simpson/">PyPI:cameron.simpson</a>
 
 Some relevant links:
-* PyPI.org:
+
+- PyPI.org:
   [several modules](https://pypi.org/user/cameron.simpson/)
   are published here for reuse.
-* SourceHut Mercurial repository:
+- SourceHut Mercurial repository:
   [overview](https://hg.sr.ht/~cameron-simpson/css),
   [commit log](https://hg.sr.ht/~cameron-simpson/css/log),
   [browse code](https://hg.sr.ht/~cameron-simpson/css/browse).
-* Documentation:
+- Documentation:
   [some overview documentation](http://www.cskk.ezoshosting.com/cs/css/),
   [some manual entries](http://www.cskk.ezoshosting.com/cs/man/)
-* Bitbucket.org source git repository - (Atlassian have abandoned their Mercurial users):
+- Bitbucket.org source git repository - (Atlassian have abandoned their Mercurial users):
   [overview](https://bitbucket.org/cameron_simpson/css/),
   [commit log](https://bitbucket.org/cameron_simpson/css/commits/all)
-* GitHub source git repository - [overview](https://github.com/cameron-simpson/css)
+- GitHub source git repository - [overview](https://github.com/cameron-simpson/css)
 
 An autoindex of the command scripts is in the file 1INDEX.txt.
 
@@ -29,10 +33,11 @@ can just be installed with:
     pip install cs.module_name
 
 Installing the whole source tree can be done as follows:
-* Obtain the tree, for example by cloning this repository
+
+- Obtain the tree, for example by cloning this repository
   into a suitable directory such as `/opt/css`, which I will assume for
   the sake of example below.
-* Configure your environment to use the scripts:
+- Configure your environment to use the scripts:
 
     . /opt/css/env.sh
 
@@ -55,31 +60,33 @@ The configuration script mostly does the following:
     export PATH MANPATH PYTHONPATH CLASSPATH PERL5LIB
 
 Several of the scripts expect the following shell environment variables:
-* `$HOST`: your machine's short name.
+
+- `$HOST`: your machine's short name.
   Defaults to $HOSTNAME without the trailing components.
-* `$HOSTNAME`: your machine's fully qualified domain name.
+- `$HOSTNAME`: your machine's fully qualified domain name.
   Defaults to `hostname`.
-* `$ARCH`: your architecture, in the form vendor.cpu.os,
+- `$ARCH`: your architecture, in the form vendor.cpu.os,
   for example `sun.sparc.solaris` or `sgi.mips.irix`.
-* `$SYSTEMID`: a name for your machines' administrative domain.
+- `$SYSTEMID`: a name for your machines' administrative domain.
   For example, I use `home` for my home LAN.
-* `$USER`: your login name.
-* `$SITENAME`: your email domain (eg cskk.id.au for me).
-* `$EMAIL`: your email address
+- `$USER`: your login name.
+- `$SITENAME`: your email domain (eg cskk.id.au for me).
+- `$EMAIL`: your email address
   (just _who@where_, no "<>"s);
   normally `$USER@$SITENAME`.
 There are some others, but those cover the common stuff.
 
-*Licence*:
+_Licence_:
 You're free to use, modify and redistribute these scripts provided that:
-* you leave my code marked as mine and your modifications (if any)
+
+- you leave my code marked as mine and your modifications (if any)
   marked as yours; it's enough to prefix your code with a terse
-  comment like: 
+  comment like:
   `# change text - reason text - yourname <youremail> - date`
-* you make recipients aware that the scripts can be obtained for free from my
+- you make recipients aware that the scripts can be obtained for free from my
   own web page
 
-*Warranty*:
+_Warranty_:
 None whatsoever!
 
 These scripts work for me, but any of them may have bugs or be
@@ -92,3 +99,7 @@ But feel free to hack them to meet your needs.
 
 - Cameron Simpson <cs@cskk.id.au>
 http://www.cskk.ezoshosting.com/cs/
+
+[//]: # (Update the markdown to be compliant with CommonMark via)
+[//]: # ( markdownlint -)
+[//]: # (Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-08-01)

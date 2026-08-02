@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools >= 77.0.3", "setuptools-scm[simple]>=9.2", "wheel"]
+requires = ["setuptools>=77.0.3", "setuptools-scm[simple]>=9.2", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -40,7 +40,7 @@ dependencies = [
     "python-dateutil",
     "typeguard"
 ]
-requires-python = ">= 3.8"
+requires-python = ">= 3.10"
 authors = [
   {name = "Cameron Simpson", email = "cs@cskk.id.au"},
   {name = "Jonathan Hyry", email = "jonathan.hyry@outlook.com"}

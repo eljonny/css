@@ -14,6 +14,7 @@ charset-normalizer==3.4.6
 colorama==0.4.6
 colour==0.1.5
 contourpy==1.3.3
+coverage==7.15.2
 cryptography==46.0.5
 cycler==0.12.1
 DeDRM_tools.git@v7.2.1#egg=dedrm&subdirectory=DeDRM_plugin
@@ -88,7 +89,7 @@ requests==2.32.5
 requests-toolbelt==1.0.0
 rfc3986==2.0.0
 rich==14.3.3
-ruff==0.15.7
+ruff==0.16.1
 SecretStorage==3.5.0
 six==1.17.0
 soupsieve==2.8.3
@@ -110,3 +111,8 @@ webencodings==0.5.1
 wrapt==1.17.3
 yapf==0.43.0
 youtube_dl @ git+https://github.com/ytdl-org/youtube-dl.git@26035bde46c0acc30dc053618451d9aeca4b7709
+
+# Update venv-requirements.txt to reflect the requirements of HSF plist
+#  testing & packaging -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-20
+

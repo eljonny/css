@@ -7,27 +7,32 @@
 ''' Self tests for cs.lex.
 '''
 
+# Add flake8 fixes -
+# easy fixes (indentation, blank lines, comment structure) -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-08-02
+
 import sys
 from functools import partial
 import unittest
 
 from .lex import (
-    FormatAsError,
-    FormatableMixin,
-    SLOSH_CHARMAP,
-    get_dotted_identifier,
-    get_envvar,
-    get_identifier,
-    get_qstr,
-    get_sloshed_text,
-    s,
-    texthexify,
-    untexthexify,
+  FormatAsError,
+  FormatableMixin,
+  SLOSH_CHARMAP,
+  get_dotted_identifier,
+  get_envvar,
+  get_identifier,
+  get_qstr,
+  get_sloshed_text,
+  s,
+  texthexify,
+  untexthexify,
 )
 
 from cs.py3 import bytes
 
-##from cs.logutils import X
+# from cs.logutils import X
+
 
 class TestLex(unittest.TestCase):
   ''' Unit tests for cs.lex.
@@ -64,8 +69,8 @@ class TestLex(unittest.TestCase):
     for envvar in self.env:
       envval, offset = get_envvar('$' + envvar, 0, self.env)
       self.assertEqual(
-          envval, self.env[envvar], "get_envvar($%s) ==> %r, expected %r" %
-          (envvar, envval, self.env[envvar])
+        envval, self.env[envvar], "get_envvar($%s) ==> %r, expected %r" %
+        (envvar, envval, self.env[envvar])
       )
       self.assertEqual(offset, len(envvar) + 1)
     self.assertEqual(get_envvar('$x', environ={}, default=''), ('', 2))
@@ -86,12 +91,12 @@ class TestLex(unittest.TestCase):
     self.assertRaises(ValueError, get_sloshed_text, '\\U000000zz', '"')
     for delim in None, '"', "'", ']':
       test_pairs = [
-          ('', ''),
-          ('abc', 'abc'),
-          ('\\\\', '\\'),
-          ('\\x40', '@'),
-          ('\\u0040', '@'),
-          ('\\U00000040', '@'),
+        ('', ''),
+        ('abc', 'abc'),
+        ('\\\\', '\\'),
+        ('\\x40', '@'),
+        ('\\u0040', '@'),
+        ('\\U00000040', '@'),
       ]
       for c, dc in SLOSH_CHARMAP.items():
         test_pairs.append(('\\' + c, dc))
@@ -103,39 +108,39 @@ class TestLex(unittest.TestCase):
         else:
           enc = enc0 + delim
         offset_expected = len(enc)
-        ##X("enc = %r", enc)
+        # X("enc = %r", enc)
         dec, offset = get_sloshed_text(enc, delim)
         self.assertEqual(
-            dec, dec0, "%r ==> %r, expected %r" % (enc, dec, dec0)
+          dec, dec0, "%r ==> %r, expected %r" % (enc, dec, dec0)
         )
         self.assertEqual(
-            offset, offset_expected,
-            "get_sloshed_text(%r): returned offset=%d, expected %d" %
-            (enc, offset, offset_expected)
+          offset, offset_expected,
+          "get_sloshed_text(%r): returned offset=%d, expected %d" %
+          (enc, offset, offset_expected)
         )
     special_func = partial(
-        get_envvar, environ=self.env, specials=self.env_specials
+      get_envvar, environ=self.env, specials=self.env_specials
     )
     specials = {'$': special_func}
     self.assertEqual(
-        get_sloshed_text(r'\$', None, specials=specials), ('$', 2)
+      get_sloshed_text(r'\$', None, specials=specials), ('$', 2)
     )
     self.assertEqual(
-        get_sloshed_text('$A', None, specials=specials), ('AA', 2)
+      get_sloshed_text('$A', None, specials=specials), ('AA', 2)
     )
     self.assertEqual(
-        get_sloshed_text('$B1', None, specials=specials), ('BB1', 3)
+      get_sloshed_text('$B1', None, specials=specials), ('BB1', 3)
     )
     self.assertEqual(
-        get_sloshed_text('$!', None, specials=specials), ('99', 2)
+      get_sloshed_text('$!', None, specials=specials), ('99', 2)
     )
     self.assertEqual(
-        get_sloshed_text('-$A-$B1-$!-', None, specials=specials),
-        ('-AA-BB1-99-', 11)
+      get_sloshed_text('-$A-$B1-$!-', None, specials=specials),
+      ('-AA-BB1-99-', 11)
     )
     self.assertEqual(
-        get_sloshed_text('-$A-\\$B1-$!-', None, specials=specials),
-        ('-AA-$B1-99-', 12)
+      get_sloshed_text('-$A-\\$B1-$!-', None, specials=specials),
+      ('-AA-$B1-99-', 12)
     )
 
   def test04get_qstr(self):
@@ -177,6 +182,7 @@ class TestLex(unittest.TestCase):
     self.assertEqual(get_dotted_identifier('a1.b.c'), ('a1.b.c', 6))
     self.assertEqual(get_dotted_identifier('a1.b.c+'), ('a1.b.c', 6))
 
+
 class TestFormattable(unittest.TestCase):
   ''' Unit tests for `FormattableFormatter` and `FormatableMixin`.
   '''
@@ -194,11 +200,11 @@ class TestFormattable(unittest.TestCase):
       ):
         if isinstance(expected, type) and issubclass(expected, Exception):
           self.assertRaises(
-              expected, obj.format_as, format_s, **format_as_kwargs
+            expected, obj.format_as, format_s, **format_as_kwargs
           )
         else:
           self.assertEqual(
-              obj.format_as(format_s, **format_as_kwargs), expected
+            obj.format_as(format_s, **format_as_kwargs), expected
           )
 
   def test_formatable_dict(self):
@@ -213,30 +219,32 @@ class TestFormattable(unittest.TestCase):
 
     fd = fdict(a=1, b=2, c='foo', d='BAR', path='a/b/C.def')
     self._test_format_as(
-        fd,
-        # simple interpolation
-        ('c={c}', 'c=foo'),
-        # unknown key
-        ('c2={c2}', FormatAsError),
-        # simple conversions
-        ('d={d}', 'd=BAR'),
-        ('d={d:title}', 'd=Bar'),
-        ('d={d:lc_}', 'd=bar'),
-        # compound conversions using Fstr methods and str methods
-        ('path={path}', 'path=a/b/C.def'),
-        ('path={path:basename}', 'path=C.def'),
-        ('path={path:basename:lc_}', 'path=c.def'),
-        ('path={path:basename:upper}', 'path=C.DEF'),
-        # fill in missing key via the missing() function
-        ('missing={miskey}', "missing=MISSING_KEY(key='miskey')"),
-        ('missing={badkey}', FormatAsError),
-        missing=missing,
+      fd,
+      # simple interpolation
+      ('c={c}', 'c=foo'),
+      # unknown key
+      ('c2={c2}', FormatAsError),
+      # simple conversions
+      ('d={d}', 'd=BAR'),
+      ('d={d:title}', 'd=Bar'),
+      ('d={d:lc_}', 'd=bar'),
+      # compound conversions using Fstr methods and str methods
+      ('path={path}', 'path=a/b/C.def'),
+      ('path={path:basename}', 'path=C.def'),
+      ('path={path:basename:lc_}', 'path=c.def'),
+      ('path={path:basename:upper}', 'path=C.DEF'),
+      # fill in missing key via the missing() function
+      ('missing={miskey}', "missing=MISSING_KEY(key='miskey')"),
+      ('missing={badkey}', FormatAsError),
+      missing=missing,
     )
+
 
 def selftest(argv):
   ''' Run selftests.
   '''
   unittest.main(__name__, None, argv)
+
 
 if __name__ == '__main__':
   selftest(sys.argv)

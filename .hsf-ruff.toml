@@ -10,7 +10,10 @@ exclude = [
     'dist',
     'logs',
     '**/__pycache__',
-    '**/*.egg-info'
+    '**/*.egg-info',
+    "hsf-coverage",
+    "hsf-cs.app.osx.plist-coverage.*",
+    ".hsf-coverage",
 ]
 
 include = [
@@ -35,13 +38,12 @@ include = [
 indent-width = 2
 line-length = 72
 respect-gitignore = true
-target-version = "py38"
+target-version = "py310"
 
 [lint]
 extend-select = [
     "C", # mccabe
     "D", # pydocstyle
-    # warns in concise mode "DOC", # pydoclint
     "E", # pycodestyle
     "F", # pyflakes
     "FLY", # flynt
@@ -64,6 +66,7 @@ extend-select = [
 ]
 ignore = [
     'D200',
+    'D203',
     'D205',
     'D208',
     'D210',
@@ -85,6 +88,7 @@ ignore = [
     'E402',
     'E501',
     'E731',
+    'EXE001',
     'N801',
     'N802',
     'N816',
@@ -109,6 +113,6 @@ max-statements = 60
 indent-style = "space"
 quote-style = "preserve"
 
-# Add .hsf-ruff.toml for package-specific linting -
+# Add .hsf-ruff.toml for package-specific ruff linting -
 # Only run linter on files related to cs.app.osx.plist -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-07-26

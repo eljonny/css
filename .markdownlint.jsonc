@@ -1,0 +1,12 @@
+{
+    "MD013": false,
+    "MD033": {
+        "allowed_elements": [
+            "a"
+        ]
+    },
+    "MD034": false
+}
+
+// Add .markdownlint.jsonc for workspace markdown linting config -
+// Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-08-01

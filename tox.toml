@@ -1,15 +1,36 @@
 env_list = [
-    { prefix = "3.", start = 8 },
-    "lint"
+    { prefix = "3.", start = 10 },
+    "test-3.10",
+    "test-3.14",
+    "coverage",
+    "lint",
 ]
 
 [env_run_base]
+description = "build and install the package"
+
+[env_base.test]
 description = "run the test suite with pytest"
+factors = [['3.10', '3.11', '3.12', '3.13', '3.14']]
 deps = [
-    "pytest>=9"
+    "pytest>=9",
 ]
+commands = [[
+    "pytest",
+    "--config-file=.hsf-pytest.toml",
+]]
+
+[env.coverage]
+description = "run the test suite with pytest and record coverage"
+deps = [
+    "pytest",
+    "coverage[toml]"
+]
+depends = ["3.*"]
 commands = [
-    ["pytest", "--config-file=.hsf-pytest.toml", { replace = "posargs", default = [], extend = true }]
+    ["coverage", "run", "--rcfile=.hsf-coveragerc.toml"],
+    ["coverage", "combine"],
+    ["coverage", "report", "--fail-under=80"],
 ]
 
 [env.lint]
@@ -20,10 +41,19 @@ deps = [
     "flake8"
 ]
 commands = [
-    ["ruff", "check", { replace = "posargs", default = ["lib/python"], extend = true }],
-    ["flake8", { replace = "posargs", default = ["lib/python"], extend = true }]
+    [
+        "ruff", "check",
+        {replace="posargs",default=[
+                "--config",
+                ".hsf-ruff.toml"
+            ], extend=true}
+    ],
+    [
+        "flake8"
+    ]
 ]
 
-# Add tox.toml for package testing and linting -
+# Add tox.toml for package build + install check, testing, coverage,
+#  and linting -
 # Make sure cs.app.osx.plist works across environments -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-19
