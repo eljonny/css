@@ -30,13 +30,12 @@ from cs.gimmicks import error
 __version__ = '20250528-post'
 
 DISTINFO = {
-    'keywords': ["python2", "python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': ['cs.deco', 'cs.gimmicks'],
+  'keywords': ["python3"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': ['cs.deco', 'cs.gimmicks'],
 }
 
 
@@ -116,8 +115,8 @@ def contextif(cmgr, *cmgr_args, **cmgr_kwargs):
       cmgr = cmgr(*cmgr_args, **cmgr_kwargs)
     elif cmgr_args or cmgr_kwargs:
       raise ValueError(
-          "cmgr %s:%r is not callable but arguments were provided: cmgr_args=%r, cmgr_kwargs=%r"
-          % (cmgr.__class__.__name__, cmgr, cmgr_args, cmgr_kwargs)
+        "cmgr %s:%r is not callable but arguments were provided: cmgr_args=%r, cmgr_kwargs=%r"
+        % (cmgr.__class__.__name__, cmgr, cmgr_args, cmgr_kwargs)
       )
     with cmgr as ctxt:
       yield ctxt

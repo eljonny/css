@@ -11,12 +11,12 @@ from typing import Protocol, TypeVar, Union, get_args, get_origin
 __version__ = '20260525-post'
 
 DISTINFO = {
-    'keywords': ["python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': [],
+  'keywords': ["python3"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': [],
 }
 
 
@@ -50,12 +50,14 @@ def subtype(t, name=None):
     name = t.__name__ + 'SubType'
   return TypeVar(name, bound=t)
 
+
 class Sortable(Protocol):
   ''' A type whose instances can be sorted i.e. support the `<` operator.
   '''
 
   def __lt__(self, other) -> bool:
     ...
+
 
 class EQSortable(Protocol):
   ''' A type whose instances can be sorted and also tested for

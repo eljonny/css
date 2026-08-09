@@ -7,21 +7,28 @@
 
 
 DISTINFO = {
-    'description':
-    "python 3 specific support for cs.py3 module",
-    'keywords': ["python2"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': [],
+  'description':
+  "python 3 specific support for cs.py3 module",
+  'keywords': ["python2"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': [],
 }
+
+
+# Add flake8 fixes - easy fixes -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-08-08
+
 
 def raise3(exc_type, exc_value, exc_traceback):
   raise exc_value.with_traceback(exc_traceback)
 
+
 def raise_from(e1, from_e2):
   raise e1 from from_e2
+
 
 exec_code = exec
 

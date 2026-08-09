@@ -75,20 +75,19 @@ from cs.pfx import XP, Pfx
 __version__ = '20260912-post'
 
 DISTINFO = {
-    'keywords': ["python2", "python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': [
-        'cs.ansi_colour>=20200729',
-        'cs.context>=stackable_state',
-        'cs.deco',
-        'cs.lex',
-        'cs.pfx',
-        'cs.py.func',
-    ],
+  'keywords': ["python3"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': [
+    'cs.ansi_colour>=20200729',
+    'cs.context>=stackable_state',
+    'cs.deco',
+    'cs.lex',
+    'cs.pfx',
+    'cs.py.func',
+  ],
 }
 
 DEFAULT_BASE_FORMAT = '%(asctime)s %(levelname)s %(message)s'
@@ -109,8 +108,8 @@ VERBOSE = logging.INFO - 1
 
 # check the hierarchy
 assert (
-    logging.DEBUG < VERBOSE < logging.INFO < STATUS < QUIET < TRACK <
-    logging.WARNING
+  logging.DEBUG < VERBOSE < logging.INFO < STATUS < QUIET < TRACK <
+  logging.WARNING
 )
 
 loginfo = None
@@ -275,18 +274,18 @@ class LoggingState(NS):
       trace_level = logging.DEBUG
 
     NS.__init__(
-        self,
-        main_log=main_log,
-        level=level,
-        verbose=verbose,
-        trace_level=trace_level,
-        flags=flags,
-        cmd=cmd,
-        upd=upd_,
-        upd_mode=upd_mode,
-        ansi_mode=ansi_mode,
-        format=format,
-        supplant_root_logger=supplant_root_logger,
+      self,
+      main_log=main_log,
+      level=level,
+      verbose=verbose,
+      trace_level=trace_level,
+      flags=flags,
+      cmd=cmd,
+      upd=upd_,
+      upd_mode=upd_mode,
+      ansi_mode=ansi_mode,
+      format=format,
+      supplant_root_logger=supplant_root_logger,
     )
 
   def apply(self):
@@ -303,7 +302,7 @@ class LoggingState(NS):
       main_handler = logging.StreamHandler(self.main_log)
       if self.upd_mode:
         main_handler = UpdHandler(
-            self.main_log, ansi_mode=self.ansi_mode, over_handler=main_handler
+          self.main_log, ansi_mode=self.ansi_mode, over_handler=main_handler
         )
         self.upd = main_handler.upd
       root_logger.setLevel(self.level)
@@ -380,8 +379,8 @@ class PfxFormatter(Formatter):
       s = Formatter.format(self, record)
     except TypeError as e:
       XP(
-          "cs.logutils: PfxFormatter.format: record=%r, self=%s: %s", record,
-          self, e
+        "cs.logutils: PfxFormatter.format: record=%r, self=%s: %s", record,
+        self, e
       )
       raise
     record.message = s
@@ -504,8 +503,8 @@ def infer_logging_level(env_debug=None, environ=None, verbose=None):
       elif uc_flag == 'ERROR':
         level = logging.ERROR
   return NS(
-      level=level,
-      flags=flags,
+    level=level,
+    flags=flags,
   )
 
 
@@ -674,8 +673,10 @@ def warning(msg, *args, **kwargs):
   '''
   log(logging.WARNING, msg, *args, **kwargs)
 
+
 vwarning = v(warning)
 vvwarning = vv(warning)
+
 
 @logging_wrapper(stacklevel_increment=1)
 def error(msg, *args, **kwargs):
@@ -817,7 +818,7 @@ class UpdHandler(StreamHandler):
       if self.ansi_mode:
         if logrec.levelno >= logging.ERROR:
           logrec.msg = colourise(
-              colourise(logrec.msg, 'white'), 'redbg', 'blackbg'
+            colourise(logrec.msg, 'white'), 'redbg', 'blackbg'
           )
         elif logrec.levelno >= logging.WARNING:
           logrec.msg = colourise(logrec.msg, 'yellow')
@@ -842,7 +843,7 @@ if __name__ == '__main__':
     warning(msg, *a, **kw)
 
   setup_logging(
-      sys.argv[0],
-      format='%(pfx)s: from %(funcName)s:%(filename)s:%(lineno)d: %(message)s'
+    sys.argv[0],
+    format='%(pfx)s: from %(funcName)s:%(filename)s:%(lineno)d: %(message)s'
   )
   test_warning("test warning")

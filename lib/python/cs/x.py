@@ -57,7 +57,7 @@ from cs.gimmicks import open_append
 __version__ = '20261016.1-post'
 
 DISTINFO = {
-    'keywords': ["python2", "python3"],
+  'keywords': ["python3"],
     'classifiers': [
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
@@ -66,7 +66,7 @@ DISTINFO = {
         'cs.ansi_colour',
         'cs.gimmicks',
     ],
-    'requires_python':
+    'python_requires':
     '>=3',
 }
 
@@ -133,11 +133,11 @@ def X(msg, *args, file=None, colour=None):
         f = open_append(X_via_tty)
       except (IOError, OSError) as e:  # noqa: UP024
         X(
-            "X: cannot append to %r: %s:%s",
-            X_via_tty,
-            type(e),
-            e,
-            file=sys.stderr,
+          "X: cannot append to %r: %s:%s",
+          X_via_tty,
+          type(e),
+          e,
+          file=sys.stderr,
         )
         X(msg, file=sys.stderr)
         return
@@ -164,10 +164,10 @@ else:
     else:
       if not os.isatty(xfd):
         X(
-            "%s: open(%r): not a tty, using %r",
-            __file__,
-            env_via_tty,
-            X_via_tty,
+          "%s: open(%r): not a tty, using %r",
+          __file__,
+          env_via_tty,
+          X_via_tty,
         )
       else:
         X_via_tty = env_via_tty

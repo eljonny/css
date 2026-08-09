@@ -28,17 +28,16 @@ __version__ = '20231129-post'
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
 
 DISTINFO = {
-    'keywords': ["python2", "python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': [
-        'cs.logutils',
-        'cs.pfx',
-        'cs.sh',
-    ],
+  'keywords': ["python3"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': [
+    'cs.logutils',
+    'cs.pfx',
+    'cs.sh',
+  ],
 }
 
 
@@ -74,8 +73,8 @@ def import_as_etree(plist):
     retcode = P.wait()
   if retcode != 0:
     raise ValueError(
-        "export_xml_as_plist(E=%s,...): plutil exited with returncode=%s" %
-        (E, retcode)
+      "export_xml_as_plist(E=%s,...): plutil exited with returncode=%s" %
+      (E, retcode)
     )
   return E
 
@@ -122,8 +121,8 @@ def export_xml_to_plist(E, fp=None, fmt='binary1'):
     retcode = P.wait()
   if retcode != 0:
     raise ValueError(
-        "export_xml_as_plist(E=%s,...): plutil exited with returncode=%s" %
-        (E, retcode)
+      "export_xml_as_plist(E=%s,...): plutil exited with returncode=%s" %
+      (E, retcode)
     )
   return None
 

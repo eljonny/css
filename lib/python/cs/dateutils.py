@@ -18,12 +18,12 @@ from time import localtime, mktime, strftime
 __version__ = '20260912-post'
 
 DISTINFO = {
-    'keywords': ["date", "time", "datetime", "python", "python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': [],
+  'keywords': ["date", "time", "datetime", "python", "python3"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': [],
 }
 
 
@@ -39,10 +39,10 @@ class tzinfoHHMM(tzinfo):
       sign = -1
     else:
       raise ValueError(
-          "%s: invalid sign '%s', should be '+' or '-'" % (
-              shhmm,
-              sign,
-          )
+        "%s: invalid sign '%s', should be '+' or '-'" % (
+          shhmm,
+          sign,
+        )
       )
     self._tzname = shhmm
     self.sign = sign
@@ -152,8 +152,8 @@ class UNIXTimeMixin:
     '''
     if not isinstance(tz, tzinfo):
       raise TypeError(
-          'not a datetime.tzinfo instance: tz=%s:%r' %
-          (tz.__class__.__name__, tz)
+        'not a datetime.tzinfo instance: tz=%s:%r' %
+        (tz.__class__.__name__, tz)
       )
     return unixtime2datetime(self.unixtime, tz=tz)
 

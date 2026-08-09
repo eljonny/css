@@ -16,14 +16,13 @@ from functools import partial
 __version__ = '20250914-post'
 
 DISTINFO = {
-    'keywords': ["python2", "python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
-    ],
-    'python_requires':
-    '>=3',
+  'keywords': ["python3"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+  ],
+  'python_requires':
+  '>=3',
 }
 
 
@@ -59,9 +58,9 @@ def funccite(func):
   except ImportError:
     shortpath = lambda p: p  # pylint: disable=unnecessary-lambda-assignment
   return "%s[%s:%d]" % (
-      funcname(func),
-      shortpath(code.co_filename),
-      code.co_firstlineno,
+    funcname(func),
+    shortpath(code.co_filename),
+    code.co_firstlineno,
   )
 
 
@@ -77,7 +76,7 @@ def func_a_kw_fmt(func, *a, **kw):
       into further arguments.  The `%` operator requires a `tuple`.
   '''
   av = [
-      func if isinstance(func, str) else getattr(func, '__name__', str(func))
+    func if isinstance(func, str) else getattr(func, '__name__', str(func))
   ]
   afv = ['%.40r'] * len(a)
   av.extend(a)
@@ -202,6 +201,6 @@ def derived_from(property_name):
       if the revision of another property exceeds the snapshot revision.
   '''
   return partial(
-      derived_property,
-      original_revision_name='_' + property_name + '__revision'
+    derived_property,
+    original_revision_name='_' + property_name + '__revision'
   )

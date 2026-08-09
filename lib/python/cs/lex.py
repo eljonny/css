@@ -69,6 +69,7 @@ from cs.seq import (
 __version__ = '20261016-post'
 
 DISTINFO = {
+==== BASE ====
     'keywords': ["python3"],
     'classifiers': [
         "Programming Language :: Python",
@@ -76,6 +77,7 @@ DISTINFO = {
         "Topic :: Text Processing",
     ],
     'install_requires': [
+        'cs.ascii_art>=LARGE_CIRCLE',
         'cs.dateutils',
         'cs.deco',
         'cs.gimmicks',
@@ -87,6 +89,7 @@ DISTINFO = {
         'icontract',
         'typeguard',
     ],
+==== BASE ====
 }
 
 unhexify = binascii.unhexlify  # pylint: disable=c-extension-no-member
@@ -353,9 +356,9 @@ def texthexify(
         if offset - offset0 > inout_len:
           # gather up whitelist span if long enough to bother
           chunk = (
-              shiftin +
-              ''.join(chr(bs[off])
-                      for off in range(offset0, offset)) + shiftout
+            shiftin +
+            ''.join(chr(bs[off])
+                    for off in range(offset0, offset)) + shiftout
           )
         else:
           # transcribe as hex anyway - too short
@@ -371,8 +374,8 @@ def texthexify(
   if offset > offset0:
     if inwhite and offset - offset0 > inout_len:
       chunk = (
-          shiftin + ''.join(chr(bs[off])
-                            for off in range(offset0, offset)) + shiftout
+        shiftin + ''.join(chr(bs[off])
+                          for off in range(offset0, offset)) + shiftout
       )
     else:
       chunk = hexify(bs[offset0:offset])
@@ -599,31 +602,31 @@ def get_prefix_n(
 
 
 NUMERAL_NAMES = {
-    'en': {
-        # all the single word numbers
-        'zero': 0,
-        'nought': 0,
-        'one': 1,
-        'two': 2,
-        'three': 3,
-        'four': 4,
-        'five': 5,
-        'six': 6,
-        'seven': 7,
-        'eight': 8,
-        'nine': 9,
-        'ten': 10,
-        'eleven': 11,
-        'twelve': 12,
-        'thirteen': 13,
-        'fourteen': 14,
-        'fifteen': 15,
-        'sixteen': 16,
-        'seventeen': 17,
-        'eighteen': 18,
-        'nineteen': 19,
-        'twenty': 20,
-    },
+  'en': {
+    # all the single word numbers
+    'zero': 0,
+    'nought': 0,
+    'one': 1,
+    'two': 2,
+    'three': 3,
+    'four': 4,
+    'five': 5,
+    'six': 6,
+    'seven': 7,
+    'eight': 8,
+    'nine': 9,
+    'ten': 10,
+    'eleven': 11,
+    'twelve': 12,
+    'thirteen': 13,
+    'fourteen': 14,
+    'fifteen': 15,
+    'sixteen': 16,
+    'seventeen': 17,
+    'eighteen': 18,
+    'nineteen': 19,
+    'twenty': 20,
+  },
 }
 
 
@@ -654,13 +657,13 @@ def get_suffix_part(
   if numeral_map is None:
     numeral_map = NUMERAL_NAMES['en']
   regexp_s = ''.join(
-      (
-          r'\W+(',
-          r'|'.join(keywords),
-          r')\s+(?P<numeral>\d+|',
-          r'|'.join(numeral_map.keys()),
-          r')\s*$',
-      )
+    (
+      r'\W+(',
+      r'|'.join(keywords),
+      r')\s+(?P<numeral>\d+|',
+      r'|'.join(numeral_map.keys()),
+      r')\s*$',
+    )
   )
   regexp = re.compile(regexp_s, re.IGNORECASE)
   m = regexp.search(s)
@@ -799,7 +802,7 @@ def get_uc_identifier(
       but require the letters to be uppercase.
   '''
   return get_identifier(
-      s, offset=offset, alpha=ascii_uppercase, number=number, extras=extras
+    s, offset=offset, alpha=ascii_uppercase, number=number, extras=extras
   )
 
 
@@ -860,13 +863,13 @@ def get_other_chars(s: str,
 
 # default character map for \c notation
 SLOSH_CHARMAP = {
-    'a': '\a',
-    'b': '\b',
-    'f': '\f',
-    'n': '\n',
-    'r': '\r',
-    't': '\t',
-    'v': '\v',
+  'a': '\a',
+  'b': '\b',
+  'f': '\f',
+  'n': '\n',
+  'r': '\r',
+  't': '\t',
+  'v': '\v',
 }
 
 
@@ -924,8 +927,8 @@ def get_sloshed_text(
     for special in specials.keys():
       if not special:
         raise ValueError(
-            'empty strings may not be used as keys for specials: %r' %
-            (specials,)
+          'empty strings may not be used as keys for specials: %r' %
+          (specials,)
         )
       special_starts.add(special[0])
       special_seqs.append(special)
@@ -958,7 +961,7 @@ def get_sloshed_text(
         # \xhh
         if slen - offset < 2:
           raise ValueError(
-              'short hexcode for %sxhh at offset %d' % (slosh, offset0)
+            'short hexcode for %sxhh at offset %d' % (slosh, offset0)
           )
         hh = s[offset:offset + 2]
         offset += 2
@@ -968,7 +971,7 @@ def get_sloshed_text(
         # \uhhhh
         if slen - offset < 4:
           raise ValueError(
-              'short hexcode for %suhhhh at offset %d' % (slosh, offset0)
+            'short hexcode for %suhhhh at offset %d' % (slosh, offset0)
           )
         hh = s[offset:offset + 4]
         offset += 4
@@ -978,7 +981,7 @@ def get_sloshed_text(
         # \Uhhhhhhhh
         if slen - offset < 8:
           raise ValueError(
-              'short hexcode for %sUhhhhhhhh at offset %d' % (slosh, offset0)
+            'short hexcode for %sUhhhhhhhh at offset %d' % (slosh, offset0)
           )
         hh = s[offset:offset + 8]
         offset += 8
@@ -1002,7 +1005,7 @@ def get_sloshed_text(
           chunks.append(chunk)
           continue
       raise ValueError(
-          'unrecognised %s%s escape at offset %d' % (slosh, c, offset0)
+        'unrecognised %s%s escape at offset %d' % (slosh, c, offset0)
       )
     if specials is not None and c in special_starts:
       # test sequence prefixes from longest to shortest
@@ -1013,8 +1016,8 @@ def get_sloshed_text(
           chunk, offset = specials[seq](s, offset0)
           if offset < offset0 + 1:
             raise ValueError(
-                "special parser for %r at offset %d moved offset backwards" %
-                (c, offset0)
+              "special parser for %r at offset %d moved offset backwards" %
+              (c, offset0)
             )
           break
       if chunk is not None:
@@ -1059,14 +1062,14 @@ def get_envvar(s, offset=0, environ=None, default=None, specials=None):
   offset += 1
   if offset >= len(s):
     raise ValueError(
-        "short string, nothing after '$' at offset %d" % (offset,)
+      "short string, nothing after '$' at offset %d" % (offset,)
     )
   identifier, offset = get_identifier(s, offset)
   if identifier:
     value = environ.get(identifier, default)
     if value is None:
       raise ValueError(
-          "unknown envvar name $%s, offset %d: %r" % (identifier, offset0, s)
+        "unknown envvar name $%s, offset %d: %r" % (identifier, offset0, s)
       )
     return value, offset
   c = s[offset]
@@ -1092,7 +1095,7 @@ def get_qstr(
   '''
   if environ is None and default is not None:
     raise ValueError(
-        "environ is None but default is not None (%r)" % (default,)
+      "environ is None but default is not None (%r)" % (default,)
     )
   if q is None:
     delim = None
@@ -1103,13 +1106,13 @@ def get_qstr(
     offset += 1
     if delim != q:
       raise ValueError("expected opening quote %r, found %r" % (
-          q,
-          delim,
+        q,
+        delim,
       ))
   if environ is None:
     return get_sloshed_text(s, delim, offset)
   getvar = partial(
-      get_envvar, environ=environ, default=default, specials=env_specials
+    get_envvar, environ=environ, default=default, specials=env_specials
   )
   return get_sloshed_text(s, delim, offset, specials={'$': getvar})
 
@@ -1132,7 +1135,7 @@ def get_delimited(s, offset, delim):
   pos = s.find(delim, offset)
   if pos < offset:
     raise ValueError(
-        "delimiter %r not found after offset %d" % (delim, offset)
+      "delimiter %r not found after offset %d" % (delim, offset)
     )
   return s[offset:pos], pos + len(delim)
 
@@ -1448,20 +1451,20 @@ def cropped_repr(obj, roffset=1, max_length=32, inner_max_length=None):
     left = '(' if isinstance(obj, tuple) else '['
     right = (',)' if len(obj) == 1 else ')') if isinstance(obj, tuple) else ']'
     o_repr = left + ','.join(
-        map(
-            lambda m:
-            cropped_repr(m, max_length=inner_max_length, roffset=roffset), obj
-        )
+      map(
+        lambda m:
+        cropped_repr(m, max_length=inner_max_length, roffset=roffset), obj
+      )
     ) + right
   elif isinstance(obj, dict):
     o_repr = '{' + ','.join(
-        map(
-            lambda kv: cropped_repr(
-                kv[0], max_length=inner_max_length, roffset=roffset
-            ) + ':' +
-            cropped_repr(kv[1], max_length=inner_max_length, roffset=roffset),
-            obj.items()
-        )
+      map(
+        lambda kv: cropped_repr(
+          kv[0], max_length=inner_max_length, roffset=roffset
+        ) + ':' +
+        cropped_repr(kv[1], max_length=inner_max_length, roffset=roffset),
+        obj.items()
+      )
     ) + '}'
   else:
     o_repr = repr(obj)
@@ -1479,7 +1482,7 @@ def get_ini_clausename(s: str, offset: int = 0) -> tuple[str, int]:
   clausename, offset = get_qstr_or_identifier(s, offset)
   if not clausename:
     raise ValueError(
-        "missing clausename identifier at position %d" % (offset,)
+      "missing clausename identifier at position %d" % (offset,)
     )
   offset = skipwhite(s, offset)
   if not s.startswith(']', offset):
@@ -1609,13 +1612,11 @@ class FormatAsError(LookupError):
     self.error_sep = error_sep
 
   def __str__(self):
-    return self.error_sep.join(
-        (
-            f'missing key {getattr(self, "_", self.key)}:',
-            f'format string was {self.format_s!r}',
-            f'available keys: {" ".join(sorted(self.format_mapping.keys()))}',
-        )
-    )
+    return self.error_sep.join((
+      f'missing key {getattr(self, "_", self.key)}:',
+      f'format string was {self.format_s!r}',
+      f'available keys: {" ".join(sorted(self.format_mapping.keys()))}',
+    ))
 
 
 @decorator
@@ -1629,9 +1630,9 @@ def format_recover(method):
       return method(self, format_spec)
     except ValueError as e:
       warning(
-          "@format_recover: %s.%s(%r): %s, falling back via %r",
-          type(self).__name__, funcname(method), format_spec, e,
-          "f'{{{self}:{format_spec}}}'"
+        "@format_recover: %s.%s(%r): %s, falling back via %r",
+        type(self).__name__, funcname(method), format_spec, e,
+        "f'{{{self}:{format_spec}}}'"
       )
       return f'{{{self}:{format_spec}}}'
 
@@ -1671,17 +1672,17 @@ def format_as(
     formatter = FormatableFormatter(format_mapping)
   if missing is not None or not strict:
     format_mapping = FormatMapping(
-        None, format_mapping, missing, strict=strict
+      None, format_mapping, missing, strict=strict
     )
   try:
     formatted = formatter.vformat(format_s, (), format_mapping)
   except KeyError as e:
     raise FormatAsError(
-        # e.args[0],
-        e._,
-        format_s,
-        format_mapping,
-        error_sep=error_sep,
+      # e.args[0],
+      e._,
+      format_s,
+      format_mapping,
+      error_sep=error_sep,
     ) from e
   return formatted
 
@@ -1733,19 +1734,19 @@ class FormatableFormatter(Formatter):
   FORMAT_RE_ATTRIBUTE_NAME_s = rf'\.{FORMAT_RE_IDENTIFIER_s}'
   FORMAT_RE_ELEMENT_INDEX_s = r'[^]]*'
   FORMAT_RE_FIELD_EXPR_s = (
-      rf'{FORMAT_RE_ARG_NAME_s}'
-      rf'({FORMAT_RE_ATTRIBUTE_NAME_s}|\[{FORMAT_RE_ELEMENT_INDEX_s}\]'
-      rf')*'
+    rf'{FORMAT_RE_ARG_NAME_s}'
+    rf'({FORMAT_RE_ATTRIBUTE_NAME_s}|\[{FORMAT_RE_ELEMENT_INDEX_s}\]'
+    rf')*'
   )
   FORMAT_RE_FIELD_EXPR = re.compile(FORMAT_RE_FIELD_EXPR_s, re.IGNORECASE)
   FORMAT_RE_FIELD = re.compile(
-      (
-          r'{'
-          rf'(?P<arg_name>{FORMAT_RE_FIELD_EXPR_s})?'
-          r'(!(?P<conversion>[^:}]*))?'
-          r'(:(?P<format_spec>[^}]*))?'
-          r'}'
-      ), re.IGNORECASE
+    (
+      r'{'
+      rf'(?P<arg_name>{FORMAT_RE_FIELD_EXPR_s})?'
+      r'(!(?P<conversion>[^:}]*))?'
+      r'(:(?P<format_spec>[^}]*))?'
+      r'}'
+    ), re.IGNORECASE
   )
 
   if False:  # pylint: disable=using-constant-test
@@ -1773,14 +1774,14 @@ class FormatableFormatter(Formatter):
         m_field = cls.FORMAT_RE_FIELD.match(format_string, offset)
         if not m_field:
           raise ValueError(
-              "expected a field at offset %d: found %r" %
-              (offset, format_string[offset:])
+            "expected a field at offset %d: found %r" %
+            (offset, format_string[offset:])
           )
         yield (
-            literal,
-            m_field.group('arg_name'),
-            m_field.group('format_spec') or '',
-            m_field.group('conversion'),
+          literal,
+          m_field.group('arg_name'),
+          m_field.group('format_spec') or '',
+          m_field.group('conversion'),
         )
         offset = m_field.end()
 
@@ -1861,8 +1862,8 @@ class FormatableFormatter(Formatter):
         subspec = m_subspec.group()
       else:
         warning(
-            "unrecognised subspec at %d: %r, falling back to split", offset,
-            format_spec[offset:]
+          "unrecognised subspec at %d: %r, falling back to split", offset,
+          format_spec[offset:]
         )
         subspec, *_ = format_spec[offset:].split(':', 1)
       offset += len(subspec)
@@ -2065,8 +2066,8 @@ class FormatableMixin(FormatableFormatter):  # pylint: disable=too-few-public-me
     '''
     if conversion == '':
       warning(
-          "%s.convert_field(%s,conversion=%r): turned conversion into None",
-          type(self).__name__, r(value), conversion
+        "%s.convert_field(%s,conversion=%r): turned conversion into None",
+        type(self).__name__, r(value), conversion
       )
       conversion = None
     return super().convert_field(value, conversion)
@@ -2117,8 +2118,8 @@ class FormatableMixin(FormatableFormatter):  # pylint: disable=too-few-public-me
         if callable(attribute):
           if not getattr(attribute, 'is_format_attribute', False):
             raise TypeError(
-                f'{self.__class__.__name__}.convert_via_method_or_attr({format_spec=})'
-                f': self.{attr}.is_format_attribute is false'
+              f'{self.__class__.__name__}.convert_via_method_or_attr({format_spec=})'
+              f': self.{attr}.is_format_attribute is false'
             )
           converted = attribute()
         else:
@@ -2151,7 +2152,7 @@ class FormatableMixin(FormatableFormatter):  # pylint: disable=too-few-public-me
         if format_kwargs_kw:
           # pylint: disable=raise-missing-from
           raise ValueError(
-              f'{r(self)}: no .format_kwargs() method, but {format_kwargs_kw=}'
+            f'{r(self)}: no .format_kwargs() method, but {format_kwargs_kw=}'
           )
         format_mapping = self
       else:
@@ -2161,18 +2162,18 @@ class FormatableMixin(FormatableFormatter):  # pylint: disable=too-few-public-me
         else:
           # surprise! maybe it's a property
           warning(
-              f'{r(self)}.format_kwargs ({type(format_kwargs_method).__name__}) is not callable, using directly'
+            f'{r(self)}.format_kwargs ({type(format_kwargs_method).__name__}) is not callable, using directly'
           )
           format_mapping = format_kwargs_method
       # wrap the mapping in FormatMapping, which provides "self"
       # if missing and calls callable mapping values
       format_mapping = FormatMapping(self, format_mapping, missing)
       return format_as(
-          format_s,
-          format_mapping,
-          formatter=self,
-          error_sep=error_sep,
-          strict=strict,
+        format_s,
+        format_mapping,
+        formatter=self,
+        error_sep=error_sep,
+        strict=strict,
       )
 
   # Utility methods for formats.
@@ -2194,9 +2195,9 @@ class FStr(FormatableMixin, str):
 
   # str is immutable: prefill with all public class attributes
   format_attributes = {
-      attr: getattr(str, attr)
-      for attr in dir(str)
-      if attr[0].isalpha()
+    attr: getattr(str, attr)
+    for attr in dir(str)
+    if attr[0].isalpha()
   }
 
   @format_attribute
@@ -2294,16 +2295,16 @@ class BaseToken(Promotable):
     '''
     if self.offset is None:
       assert self.end_offset is None, (
-          f'{self.offset=} but {self.end_offset=} (both should be None)'
+        f'{self.offset=} but {self.end_offset=} (both should be None)'
       )
       self.offset = 0
       self.end_offset = len(self.source_text)
     else:
       assert self.end_offset is not None, (
-          f'{self.offset=} but {self.end_offset=} (neither should be None)'
+        f'{self.offset=} but {self.end_offset=} (neither should be None)'
       )
     assert 0 <= self.offset <= self.end_offset <= len(self.source_text), (
-        f'{len(self.source_text)=}: {self.offset=} or {self.end_offset=} out of range'
+      f'{len(self.source_text)=}: {self.offset=} or {self.end_offset=} out of range'
     )
 
   def __str__(self):
@@ -2359,8 +2360,8 @@ class BaseToken(Promotable):
       except SyntaxError:
         pass
     raise SyntaxError(
-        'no subclass.parse succeeded,'
-        f'tried {",".join(subcls.__name__ for subcls in token_classes)}'
+      'no subclass.parse succeeded,'
+      f'tried {",".join(subcls.__name__ for subcls in token_classes)}'
     )
 
   @classmethod
@@ -2375,8 +2376,8 @@ class BaseToken(Promotable):
     assert offset == token.end_offset
     if token.end_offset != len(text):
       raise SyntaxError(
-          f'unparsed text at offset {token.end_offset}:'
-          f' {text[token.end_offset:]!r}'
+        f'unparsed text at offset {token.end_offset}:'
+        f' {text[token.end_offset:]!r}'
       )
     return token
 
@@ -2426,10 +2427,10 @@ class Identifier(CoreTokens, BaseToken):
     name, end_offset = get_dotted_identifier(text, offset)
     if not name:
       raise SyntaxError(
-          f'{offset}: expected dotted identifier, found {text[offset:offset + 3]!r}...'
+        f'{offset}: expected dotted identifier, found {text[offset:offset + 3]!r}...'
       )
     return cls(
-        source_text=text, offset=offset, end_offset=end_offset, name=name
+      source_text=text, offset=offset, end_offset=end_offset, name=name
     )
 
 
@@ -2460,14 +2461,14 @@ class NumericValue(_LiteralValue, BaseToken):
     m = cls._token_re.match(text, start_offset)
     if not m:
       raise SyntaxError(
-          f'{start_offset}: expected int or float, found {text[start_offset:start_offset + 16]!r}'
+        f'{start_offset}: expected int or float, found {text[start_offset:start_offset + 16]!r}'
       )
     try:
       value = int(m.group())
     except ValueError:
       value = float(m.group())
     return cls(
-        source_text=text, offset=offset, end_offset=m.end(), value=value
+      source_text=text, offset=offset, end_offset=m.end(), value=value
     )
 
 
@@ -2490,16 +2491,16 @@ class QuotedString(_LiteralValue, BaseToken):
       offset = skipwhite(text, offset)
     if not text.startswith('"', offset):
       raise SyntaxError(
-          f'{offset}: expected ", found {text[offset:offset + 1]!r}'
+        f'{offset}: expected ", found {text[offset:offset + 1]!r}'
       )
     q = text[offset]
     value, end_offset = get_qstr(text, offset)
     return cls(
-        source_text=text,
-        offset=offset,
-        end_offset=end_offset,
-        value=value,
-        quote=q,
+      source_text=text,
+      offset=offset,
+      end_offset=end_offset,
+      value=value,
+      quote=q,
     )
 
 

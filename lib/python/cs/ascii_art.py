@@ -46,12 +46,12 @@ r'''Utilities to assist with ASCII art such as railroad diagrams;
 __version__ = '20260912-post'
 
 DISTINFO = {
-    'keywords': ["python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': ['cs.context', 'cs.deco'],
+  'keywords': ["python3"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': ['cs.context', 'cs.deco'],
 }
 
 from abc import ABC, abstractmethod
@@ -68,12 +68,13 @@ from cs.context import stackattrs
 from cs.deco import decorator, Promotable
 
 DEFAULT_RENDER_CONTEXT = NS(
-    arc=True,
-    ascii=False,
-    heavy=False,
-    attach_w=False,
-    attach_e=False,
+  arc=True,
+  ascii=False,
+  heavy=False,
+  attach_w=False,
+  attach_e=False,
 )
+
 
 def box_char_name(
     heavy=False, arc=False, up=False, down=False, left=False, right=False
@@ -97,7 +98,7 @@ def box_char_name(
   # TODO: Looks like there are single direction characters, supporting count=1
   if count < 2:
     raise ValueError(
-        f'at least 2 of {up=}, {down=}, {left=}, {right=} must be true'
+      f'at least 2 of {up=}, {down=}, {left=}, {right=} must be true'
     )
   if arc:
     # just turn arc off if we can't do it
@@ -112,23 +113,24 @@ def box_char_name(
     #       f'{arc=} may not be true if there is a horizontal or vertical'
     #   )
   return " ".join(
-      filter(
-          None, (
-              'BOX DRAWINGS',
-              'HEAVY' if heavy and not arc else 'LIGHT',
-              'ARC' if arc else '',
-              (
-                  'VERTICAL'
-                  if up and down else 'UP' if up else 'DOWN' if down else ''
-              ),
-              'AND' if (up or down) and (left or right) else '',
-              (
-                  'HORIZONTAL' if left and right else
-                  'LEFT' if left else 'RIGHT' if right else ''
-              ),
-          )
+    filter(
+      None, (
+        'BOX DRAWINGS',
+        'HEAVY' if heavy and not arc else 'LIGHT',
+        'ARC' if arc else '',
+        (
+          'VERTICAL'
+          if up and down else 'UP' if up else 'DOWN' if down else ''
+        ),
+        'AND' if (up or down) and (left or right) else '',
+        (
+          'HORIZONTAL' if left and right else
+          'LEFT' if left else 'RIGHT' if right else ''
+        ),
       )
+    )
   )
+
 
 @cache
 def box_char(
@@ -171,10 +173,11 @@ def box_char(
       return "-"
     raise RuntimeError(f'{ascii=} {up=} {down=} {left=} {right=}')
   return unicodedata.lookup(
-      box_char_name(
-          heavy=heavy, arc=arc, up=up, down=down, left=left, right=right
-      )
+    box_char_name(
+      heavy=heavy, arc=arc, up=up, down=down, left=left, right=right
+    )
   )
+
 
 # precompute various drawing characters
 VERT = box_char(up=True, down=True)
@@ -195,6 +198,7 @@ LARGE_CIRCLE = '\N{LARGE CIRCLE}'
 LEFT_ARROW = '\N{LEFTWARDS ARROW}'
 RIGHT_ARROW = '\N{RIGHTWARDS ARROW}'
 
+
 @dataclass(slots=True)
 class Cell:
   ''' A representation of a character cell for a hypothetical future
@@ -212,14 +216,15 @@ class Cell:
     glyph = self._glpyh
     if glyph is None:
       glyph = self._glyph = box_char(
-          heavy=self.heavy,
-          arc=self.arc,
-          up=self.up,
-          down=self.down,
-          left=self.left,
-          right=self.right,
+        heavy=self.heavy,
+        arc=self.arc,
+        up=self.up,
+        down=self.down,
+        left=self.left,
+        right=self.right,
       )
     return glyph
+
 
 @contextmanager
 def render_mode(ctx=None, **render_kw):
@@ -231,6 +236,7 @@ def render_mode(ctx=None, **render_kw):
     ctx = DEFAULT_RENDER_CONTEXT
   with stackattrs(ctx, **render_kw):
     yield ctx
+
 
 @decorator
 def render(render_func, **render_defaults):
@@ -280,6 +286,7 @@ def render(render_func, **render_defaults):
 
   return render_wrapper
 
+
 @dataclass
 class RRBase(Promotable, ABC):
   ''' The abstract base class for various boxes.
@@ -320,17 +327,17 @@ class RRBase(Promotable, ABC):
     return cls.from_str(str(f))
 
   @classmethod
-  def from_tuple(cls, t) -> "RRCHoice":
+  def from_tuple(cls, t) -> "RRChoice":
     return RRChoice(content=map(cls.promote, t))
 
   @classmethod
-  def from_list(cls, l) -> "RRSequence":
+  def from_list(cls, lst) -> "RRSequence":
     rrs = []
-    for i, item in enumerate(l):
+    for i, item in enumerate(lst):
       if isinstance(item, tuple):
         if i == 0:
           rrcls = RRMerge
-        elif i == len(l) - 1:
+        elif i == len(lst) - 1:
           rrcls = RRSplit
         else:
           rrcls = RRChoice
@@ -368,12 +375,12 @@ class RRBase(Promotable, ABC):
     right_length = length - left_length
     if left_up or left_down:
       left_end = box_char(
-          arc=arc, right=True, up=left_up, down=left_down, heavy=heavy
+        arc=arc, right=True, up=left_up, down=left_down, heavy=heavy
       )
       left_length -= 1
       if left_length < 0:
         raise ValueError(
-            f'insuffient room for {middle=} and the leftmost symbol'
+          f'insuffient room for {middle=} and the leftmost symbol'
         )
     else:
       left_end = ''
@@ -381,12 +388,12 @@ class RRBase(Promotable, ABC):
                if heavy else '-') if ascii else (HORIZ_ if heavy else HORIZ)
     if right_up or right_down:
       right_end = box_char(
-          arc=arc, left=True, up=right_up, down=right_down, heavy=heavy
+        arc=arc, left=True, up=right_up, down=right_down, heavy=heavy
       )
       right_length -= 1
       if right_length < 0:
         raise ValueError(
-            f'insuffient room for {middle=} and the rightmost symbol'
+          f'insuffient room for {middle=} and the rightmost symbol'
         )
     else:
       right_end = ''
@@ -510,6 +517,156 @@ class RRBase(Promotable, ABC):
     '''
     return "\n".join(self.render_lines(**render_kw))
 
+
+@dataclass
+class _RailRoadMulti(RRBase):
+  content: list[RRBase] = field(default_factory=list)
+
+  def __post_init__(self):
+    # promote str to RRTextBox
+    self.content = [
+      self.from_str(box) if isinstance(box, str) else box
+      for box in self.content
+    ]
+
+  def append(self, box):
+    self.content.append(self.from_str(box) if isinstance(box, str) else box)
+
+
+@dataclass
+class RRStack(_RailRoadMulti):
+  ''' An unadorned vertical stack of the content.
+  '''
+
+  def __hash__(self):
+    return id(self)
+
+  def __eq__(self, other):
+    return self is other
+
+  @cached_property
+  def height(self):
+    ''' The overall height of the content.
+    '''
+    return sum(box.height for box in self.content)
+
+  @cached_property
+  def inner_width(self):
+    return max(box.width for box in self.content)
+
+  @property
+  def width(self):
+    ''' The overall width of the content.
+    '''
+    return self.inner_width
+
+  @cached_property
+  def ws(self):
+    ''' A cached `tuple` of the line offsets of each stacked box's `.w` position.
+    '''
+    height = 0
+    ws = []
+    for box in self.content:
+      ws.append(height + box.w)
+      height += box.height
+    return tuple(ws)
+
+  @cached_property
+  def es(self):
+    ''' A cached `tuple` of the line offsets of each stacked box's `.e` position.
+    '''
+    height = 0
+    es = []
+    for box in self.content:
+      es.append(height + box.e)
+      height += box.height
+    return tuple(es)
+
+  @render(align='left')  # vs right and... anything else
+  def render_lines(self, *, align, heavy, attach_e, attach_w, **_):
+    lines = []
+    for box in self.content:
+      box_pad_length = self.inner_width - box.width
+      box_pad_left = (
+        0 if align == 'left' else
+        box_pad_length if align == 'right' else box_pad_length // 2
+      )
+      box_pad_right = box_pad_length - box_pad_left
+      spaces_left = " " * box_pad_left
+      line_left = self.horiz(box_pad_left)
+      spaces_right = " " * box_pad_right
+      line_right = self.horiz(box_pad_right)
+      for li, box_line in enumerate(box.render_lines(
+          heavy=heavy,
+          attach_e=attach_e,
+          attach_w=attach_w,
+      )):
+        lines.append(
+          "".join((
+            (line_left if attach_w and li == box.w else spaces_left),
+            box_line,
+            (line_right if attach_e and li == box.e else spaces_right),
+          ))
+        )
+    return lines
+
+
+@dataclass
+class RRChoice(RRStack):
+
+  def __hash__(self):
+    return id(self)
+
+  def __eq__(self, other):
+    return self is other
+
+  @property
+  def w(self):
+    return (super().ws[0] + super().ws[-1]) // 2
+
+  @property
+  def ws(self):
+    return self.w,
+
+  @property
+  def e(self):
+    return (super().es[0] + super().es[-1]) // 2
+
+  @property
+  def es(self):
+    return self.e,
+
+  @property
+  def width(self):
+    return super().width + 2
+
+  @render
+  def render_lines(self, *, arc, heavy, attach_e, attach_w, **_):
+    lines = []
+    for li, inner_line in enumerate(super().render_lines()):
+      lines.append(
+        "".join((
+          self.conn_char(
+            li,
+            self.ws if attach_w else (),
+            super().ws,
+            arc=arc,
+            heavy=heavy
+          ),
+          inner_line,
+          self.conn_char(
+            li,
+            super().es,
+            self.es if attach_e else (),
+            arc=arc,
+            heavy=heavy
+          ),
+        ))
+      )
+    assert len(lines) == self.height
+    return lines
+
+
 @dataclass
 class Symbol(RRBase):
   ''' A bare text based symbol like `RR_START` or `RR_END`.
@@ -534,6 +691,7 @@ class Symbol(RRBase):
   def width(self):
     return len(self.name)
 
+
 @dataclass
 class Terminal(Symbol):
   ''' Like a symbol, but with a marker either side.
@@ -549,23 +707,25 @@ class Terminal(Symbol):
   def render_lines(self, heavy, *, ascii, attach_w, attach_e,
                    **_) -> list[str]:
     return [
-        "".join(
-            (
-                "|" if ascii else
-                box_char(heavy=heavy, left=attach_w, up=True, down=True),
-                self.name,
-                "|" if ascii else
-                box_char(heavy=heavy, right=attach_e, up=True, down=True),
-            )
+      "".join(
+        (
+          "|" if ascii else
+          box_char(heavy=heavy, left=attach_w, up=True, down=True),
+          self.name,
+          "|" if ascii else
+          box_char(heavy=heavy, right=attach_e, up=True, down=True),
         )
+      )
     ]
 
   @property
   def width(self):
     return len(self.name) + 2
 
+
 RR_START = Symbol(VERT_RIGHT + CROSS)
 RR_END = Symbol(CROSS + VERT_LEFT)
+
 
 @dataclass
 class RRTextBox(RRBase):
@@ -592,27 +752,27 @@ class RRTextBox(RRBase):
     '''
     line_width = max(self.max_text_length, 1)
     return [
-        self.horiz(self.width, left_down=True, right_down=True),
-        *(
-            "".join(
-                (
-                    box_char(
-                        up=True,
-                        down=True,
-                        left=attach_w and i == self.w,
-                        heavy=heavy
-                    ),
-                    f'{text_line:<{line_width}}',
-                    box_char(
-                        up=True,
-                        down=True,
-                        right=attach_e and i == self.e,
-                        heavy=heavy
-                    ),
-                )
-            ) for i, text_line in enumerate(self.lines, 1)
-        ),
-        self.horiz(self.width, left_up=True, right_up=True),
+      self.horiz(self.width, left_down=True, right_down=True),
+      *(
+        "".join(
+          (
+            box_char(
+              up=True,
+              down=True,
+              left=attach_w and i == self.w,
+              heavy=heavy
+            ),
+            f'{text_line:<{line_width}}',
+            box_char(
+              up=True,
+              down=True,
+              right=attach_e and i == self.e,
+              heavy=heavy
+            ),
+          )
+        ) for i, text_line in enumerate(self.lines, 1)
+      ),
+      self.horiz(self.width, left_up=True, right_up=True),
     ]
 
   @cached_property
@@ -669,6 +829,7 @@ class RRTextBox(RRBase):
     '''
     return self.width // 2
 
+
 @dataclass
 class _RailRoadAround(RRBase):
   content: RRBase
@@ -689,36 +850,34 @@ class _RailRoadAround(RRBase):
     lines = []
     if above:
       lines.append(
-          self.horiz(self.width, self.middle, left_down=True, right_down=True)
+        self.horiz(self.width, self.middle, left_down=True, right_down=True)
       )
     inner_lines = self.content.render_lines(
-        heavy=heavy, attach_e=True, attach_w=True
+      heavy=heavy, attach_e=True, attach_w=True
     )
     for i, line in enumerate(inner_lines):
       lines.append(
-          "".join(
-              (
-                  box_char(
-                      up=i <= iw if above else i > iw,
-                      down=i < iw if above else i >= iw,
-                      left=attach_w and i == iw,
-                      right=i == iw,
-                  ),
-                  line,
-                  box_char(
-                      up=i <= ie if above else i > ie,
-                      down=i < ie if above else i >= ie,
-                      left=i == ie,
-                      right=attach_e and i == ie,
-                  ),
-              )
-          )
+        "".join((
+          box_char(
+            up=i <= iw if above else i > iw,
+            down=i < iw if above else i >= iw,
+            left=attach_w and i == iw,
+            right=i == iw,
+          ),
+          line,
+          box_char(
+            up=i <= ie if above else i > ie,
+            down=i < ie if above else i >= ie,
+            left=i == ie,
+            right=attach_e and i == ie,
+          ),
+        ))
       )
     if not above:
       lines.append(
-          self.horiz(
-              self.width, middle=self.middle, left_up=True, right_up=True
-          )
+        self.horiz(
+          self.width, middle=self.middle, left_up=True, right_up=True
+        )
       )
     return lines
 
@@ -738,6 +897,7 @@ class _RailRoadAround(RRBase):
   def w(self):
     return self.content.w + int(self.above)
 
+
 @dataclass
 class RRRepeat(_RailRoadAround):
   middle: str = LEFT_ARROW
@@ -747,6 +907,7 @@ class RRRepeat(_RailRoadAround):
 
   def __eq__(self, other):
     return self is other
+
 
 @dataclass
 class RROptional(_RailRoadAround):
@@ -758,156 +919,6 @@ class RROptional(_RailRoadAround):
   def __eq__(self, other):
     return self is other
 
-@dataclass
-class _RailRoadMulti(RRBase):
-  content: list[RRBase] = field(default_factory=list)
-
-  def __post_init__(self):
-    # promote self.content to list[RRBase]
-    self.content = [RRBase.promote(box) for box in self.content]
-
-  def __getitem__(self, index):
-    return self.content[index]
-
-  def append(self, box):
-    self.content.append(self.from_str(box) if isinstance(box, str) else box)
-
-@dataclass
-class RRStack(_RailRoadMulti):
-  ''' An unadorned vertical stack of the content.
-  '''
-
-  def __hash__(self):
-    return id(self)
-
-  def __eq__(self, other):
-    return self is other
-
-  @cached_property
-  def height(self):
-    ''' The overall height of the content.
-    '''
-    return sum(box.height for box in self.content)
-
-  @cached_property
-  def inner_width(self):
-    return max(box.width for box in self.content)
-
-  @property
-  def width(self):
-    ''' The overall width of the content.
-    '''
-    return self.inner_width
-
-  @cached_property
-  def ws(self):
-    ''' A cached `tuple` of the line offsets of each stacked box's `.w` position.
-    '''
-    height = 0
-    ws = []
-    for box in self.content:
-      ws.append(height + box.w)
-      height += box.height
-    return tuple(ws)
-
-  @cached_property
-  def es(self):
-    ''' A cached `tuple` of the line offsets of each stacked box's `.e` position.
-    '''
-    height = 0
-    es = []
-    for box in self.content:
-      es.append(height + box.e)
-      height += box.height
-    return tuple(es)
-
-  @render(align='left')  # vs right and... anything else
-  def render_lines(self, *, align, heavy, attach_e, attach_w,
-                   **_) -> list[str]:
-    lines = []
-    for box in self.content:
-      box_pad_length = self.inner_width - box.width
-      box_pad_left = (
-          0 if align == 'left' else
-          box_pad_length if align == 'right' else box_pad_length // 2
-      )
-      box_pad_right = box_pad_length - box_pad_left
-      spaces_left = " " * box_pad_left
-      line_left = self.horiz(box_pad_left)
-      spaces_right = " " * box_pad_right
-      line_right = self.horiz(box_pad_right)
-      for line_index, box_line in enumerate(box.render_lines(
-          heavy=heavy,
-          attach_e=attach_e,
-          attach_w=attach_w,
-      )):
-        lines.append(
-            "".join(
-                (
-                    (
-                        line_left
-                        if attach_w and line_index == box.w else spaces_left
-                    ),
-                    box_line,
-                    (
-                        line_right
-                        if attach_e and line_index == box.e else spaces_right
-                    ),
-                )
-            )
-        )
-    return lines
-
-@dataclass
-class RRChoice(RRStack):
-
-  def __hash__(self):
-    return id(self)
-
-  def __eq__(self, other):
-    return self is other
-
-  @property
-  def w(self):
-    return (super().ws[0] + super().ws[-1]) // 2
-
-  @property
-  def ws(self):
-    return self.w,
-
-  @property
-  def e(self):
-    return (super().es[0] + super().es[-1]) // 2
-
-  @property
-  def es(self):
-    return self.e,
-
-  @property
-  def width(self):
-    return super().width + 2
-
-  @render
-  def render_lines(self, *, arc, heavy, attach_e, attach_w, **_) -> list[str]:
-    lines = []
-    ws = self.ws if attach_w else ()
-    es = self.es if attach_e else ()
-    for line_index, inner_line in enumerate(super().render_lines()):
-      lines.append(
-          "".join(
-              (
-                  self.conn_char(
-                      line_index, ws, super().ws, arc=arc, heavy=heavy
-                  ),
-                  inner_line,
-                  self.conn_char(
-                      line_index, super().es, es, arc=arc, heavy=heavy
-                  ),
-              )
-          )
-      )
-    assert len(lines) == self.height
-    return lines
 
 @dataclass
 class RRMerge(RRStack):
@@ -948,19 +959,21 @@ class RRMerge(RRStack):
     '''
     lines = []
     es = self.es if attach_e else ()
-    for line_index, inner_line in enumerate(super().render_lines(attach_e=True)
-                                            ):
+    for line_index, inner_line in enumerate(super().render_lines(attach_e=True)):
       lines.append(
-          "".join(
-              (
-                  inner_line,
-                  self.conn_char(
-                      line_index, super().es, es, arc=arc, heavy=heavy
-                  ),
-              )
-          )
+        "".join((
+          inner_line,
+          self.conn_char(
+            line_index,
+            super().es,
+            es,
+            arc=arc,
+            heavy=heavy
+          ),
+        ))
       )
     return lines
+
 
 @dataclass
 class RRSplit(RRStack):
@@ -999,19 +1012,21 @@ class RRSplit(RRStack):
     '''
     lines = []
     ws = self.ws if attach_w else ()
-    for line_index, inner_line in enumerate(super().render_lines(attach_w=True)
-                                            ):
+    for line_index, inner_line in enumerate(super().render_lines(attach_w=True)):
       lines.append(
-          "".join(
-              (
-                  self.conn_char(
-                      line_index, ws, super().ws, arc=arc, heavy=heavy
-                  ),
-                  inner_line,
-              )
-          )
+        "".join((
+          self.conn_char(
+            line_index,
+            ws,
+            super().ws,
+            arc=arc,
+            heavy=heavy
+          ),
+          inner_line,
+        ))
       )
     return lines
+
 
 @dataclass
 class RRSequence(_RailRoadMulti):
@@ -1030,7 +1045,7 @@ class RRSequence(_RailRoadMulti):
     ''' The render width of the `RRSequence` in characters..
     '''
     return sum(box.width for box in self.content) + sep_len * (
-        len(self.content) - 1
+      len(self.content) - 1
     )
 
   @property
@@ -1132,6 +1147,7 @@ class RRSequence(_RailRoadMulti):
       assert row == len(lines), f'{row=} != {len(lines)=}'
     return ["".join(line_v) for line_v in lines]
 
+
 def rrprint(*seq, sep=''):
   ''' Promote the arguments to `RRBase` instances, make into an
       `RRSequence` and print it.
@@ -1157,7 +1173,9 @@ def _rr_morse():
   _T = ['- T', (oN, _M)]
   return RRBase.promote((oE, _T))
 
+
 rr_morse = _rr_morse()
+
 
 def test_railroad():
   ''' Exercise various boxes.
@@ -1166,10 +1184,10 @@ def test_railroad():
   print(box5)
   box5.print(heavy=True)
   seq = RRSequence(
-      (
-          RR_START, RRRepeat("repeat me"), "2 lines\naaaa",
-          RRChoice(("one", "two", "three", box5)), RR_END
-      )
+    (
+      RR_START, RRRepeat("repeat me"), "2 lines\naaaa",
+      RRChoice(("one", "two", "three", box5)), RR_END
+    )
   )
   print(seq)
   seq.print(heavy=True)
@@ -1185,65 +1203,66 @@ def test_railroad():
   split = RRSplit((RR_START, RRSequence(("1", "2", "33")), "something"))
   split.print(attach_w=True, align='right')
   rrprint(
-      (
-          "A",
-          "B",
-          "C",
-      ), 1, "2\nZ", 3, (
-          4,
-          5,
-          6,
-      ), (
+    (
+      "A",
+      "B",
+      "C",
+    ), 1, "2\nZ", 3, (
+      4,
+      5,
+      6,
+    ), (
+      7,
+      8,
+      [
+        9,
+        10,
+        (
           7,
-          8,
-          [
-              9,
-              10,
-              (
-                  7,
-                  6,
-                  5,
-              ),
-              "x",
-              (
-                  5,
-                  4,
-                  3,
-              ),
-          ],
-          [7, (2, 3, 4)],
-      )
-  )  ## , 11)
+          6,
+          5,
+        ),
+        "x",
+        (
+          5,
+          4,
+          3,
+        ),
+      ],
+      [7, (2, 3, 4)],
+    )
+  )  # , 11)
   with render_mode(ascii=True):
     rrprint(
-        1,
-        ## 1,
-        ##2,
-        (
-            4,
-            5,
-            [6, (6, 7, 6)],
-        ),
-        9,
+      1,
+      # 1,
+      # 2,
+      (
+        4,
+        5,
+        [6, (6, 7, 6)],
+      ),
+      9,
     )
 
+
 if __name__ == '__main__':
-  ##test_railroad()
+  # test_railroad()
   rrprint(
-      RR_START,
-      RRRepeat("repeat me"),
-      "2 lines\naaaa",
-      (
-          "one",
-          "two",
-          "three",
-          "one\n"
-          "two\n"
-          "three\n"
-          "four\n"
-          "five",
-          ["a", "sequence"],
-      ),
-      RR_END,
+    RR_START,
+    RRRepeat("repeat me"),
+    "2 lines\naaaa",
+    (
+      "one",
+      "two",
+      "three",
+      "one\n"
+      "two\n"
+      "three\n"
+      "four\n"
+      "five",
+      ["a", "sequence"],
+    ),
+    RR_END,
   )
   rrprint(RR_START, rr_morse, RR_END)

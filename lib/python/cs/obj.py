@@ -31,7 +31,7 @@ from cs.seq import consume, not_none
 __version__ = '20261016-post'
 
 DISTINFO = {
-    'keywords': ["python2", "python3"],
+  'keywords': ["python3"],
     'classifiers': [
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
@@ -76,9 +76,9 @@ class O(SimpleNamespace): # noqa E742
     if caller not in self.callers:
       self.callers.add(caller)
       print(
-          "WARNING: %s:%d %s: obsolete use of cs.obj.O, please shift to types.SimpleNamespace."
-          % (frame[0], frame[1], frame[2]),
-          file=sys.stderr
+        "WARNING: %s:%d %s: obsolete use of cs.obj.O, please shift to types.SimpleNamespace."
+        % (frame[0], frame[1], frame[2]),
+        file=sys.stderr
       )
     SimpleNamespace.__init__(self, **kw)
 
@@ -165,8 +165,8 @@ def O_str(o, no_recurse=False, seen=None):
   seen.add(id(o))
   if no_recurse:
     attrdesc_strs = [
-        "%s=<%s>" % (pattr, type(pvalue).__name__)
-        for pattr, pvalue in O_attritems(o)
+      "%s=<%s>" % (pattr, type(pvalue).__name__)
+      for pattr, pvalue in O_attritems(o)
     ]
   else:
     attrdesc_strs = []
@@ -175,7 +175,7 @@ def O_str(o, no_recurse=False, seen=None):
         desc = "<%s>" % (type(pvalue).__name__,)
       else:
         desc = "%s=%s" % (
-            pattr, O_str(pvalue, no_recurse=no_recurse, seen=seen)
+          pattr, O_str(pvalue, no_recurse=no_recurse, seen=seen)
         )
       attrdesc_strs.append(desc)
   s = "<%s %s>" % (o.__class__.__name__, ",".join(attrdesc_strs))
@@ -249,6 +249,7 @@ class Proxy:
   def __len__(self):
     _proxied = object.__getattribute__(self, '_proxied')
     return len(_proxied)
+
 
 class NoAttrs:
   ''' A stub class whose `__getattr__` raises `AttributeError`.
@@ -550,10 +551,10 @@ class SingletonMixin:
       return []
     else:
       return list(
-          filter(
-              lambda obj: obj is not None,
-              map(lambda ref: ref(), registry.valuerefs())
-          )
+        filter(
+          lambda obj: obj is not None,
+          map(lambda ref: ref(), registry.valuerefs())
+        )
       )
 
 
@@ -767,8 +768,8 @@ class Refreshable(ABC):
     if ratelimit is None:
       # optional instance attribute
       ratelimit = getattr(
-          self, 'refresh_ratelimit',
-          type(self).REFRESH_RATELIMIT
+        self, 'refresh_ratelimit',
+        type(self).REFRESH_RATELIMIT
       )
     now = time.time()
     do_refresh = True
@@ -785,7 +786,6 @@ class Refreshable(ABC):
             # too soon
             do_refresh = False
     if do_refresh:
-==== BASE ====
       if data is None:
         if not force:
           if not self.refresh_needed(lifespan=lifespan, now=now):
@@ -799,6 +799,7 @@ class Refreshable(ABC):
               do_refresh = False
       if do_refresh:
         if data is None:
+==== BASE ====
           # the refresh will be doing a poll, whatever that means
           self.refresh_last_poll = now
         was_updated = self._refresh(data=data, **_refresh_kw)
@@ -810,27 +811,34 @@ class Refreshable(ABC):
           self.refresh_last_update = now
       if recurse:
         # refresh some objects nonrecursively
-        self.refresh_bulk(
+        for _ in map(
+            lambda obj: obj.refresh(
+                recurse=False,
+                map=map,
+                force=force,
+                lifespan=lifespan0,
+                ratelimit=ratelimit0,
+                seen=seen,
+                **_refresh_kw,
+            ),
             not_none(self.refresh_related1()),
-            refresh=False,
-            map=map,
-            force=force,
-            lifespan=lifespan0,
-            ratelimit=ratelimit0,
-            seen=seen,
-            **_refresh_kw,
-        )
+        ):
+          pass
         # refresh other related objects recursively
-        self.refresh_bulk(
+        for _ in map(
+            lambda obj: obj.refresh(
+                recurse=True,
+                map=map,
+                force=force,
+                lifespan=lifespan0,
+                ratelimit=ratelimit0,
+                seen=seen,
+                **_refresh_kw,
+            ),
             not_none(self.refresh_related()),
-            recurse=True,
-            map=map,
-            force=force,
-            lifespan=lifespan0,
-            ratelimit=ratelimit0,
-            seen=seen,
-            **_refresh_kw,
-        )
+        ):
+          pass
+==== BASE ====
     return was_updated
 
   def refreshed(self, **refresh_kw):
@@ -839,31 +847,8 @@ class Refreshable(ABC):
     '''
     self.refresh(**refresh_kw)
     return self
-
-  @staticmethod
-  def refresh_bulk(
-      objs: Iterable["Refreshable"],
-      *,
-      concurrent=False,
-      map=None,
-      **refresh_kw,
-  ):
-    ''' Refresh multiple `Refreshable` objects, concurrently if `concurrent` is not `False`.
-    '''
-    if map is None:
-      if concurrent is not False:
-        try:
-          from cs.threads import pmap
-        except ImportError:
-          map = builtins.map
-        else:
-          map = partial(pmap, concurrent=concurrent)
-      else:
-        map = builtins.map
-    consume(
-        map(lambda obj: obj.refresh(map=map, **refresh_kw), not_none(objs))
-    )
-
+==== BASE ====
+==== BASE ====
 def public_subclasses(cls, extras=()):
   ''' Return a set of the subclasses of `cls` which have public names.
   '''

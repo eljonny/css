@@ -16,13 +16,13 @@ less demanding of others.
 __version__ = '20260311-post'
 
 DISTINFO = {
-    'keywords': ["python2", "python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': [],
+  'keywords': ["python2", "python3"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 2",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': [],
 }
 
 # pylint: disable=wrong-import-position
@@ -74,9 +74,9 @@ except ImportError:
 
     def __str__(self):
       return "%s(%s)" % (
-          type(self).__name__, ','.join(
-              ["%s=%s" % (k, v) for k, v in sorted(self.__dict__.items())]
-          )
+        type(self).__name__, ','.join(
+          ["%s=%s" % (k, v) for k, v in sorted(self.__dict__.items())]
+        )
       )
 
 # define the local symbol TimeoutError
@@ -105,8 +105,8 @@ except NameError:
           msg = "%s: timeout exceeded" % (message,)
         else:
           msg = "%s: timeout exceeded (%ss)" % (
-              message,
-              timeout,
+            message,
+            timeout,
           )
         Exception.__init__(self, msg)
 

@@ -11,26 +11,44 @@ This package presents various names in python 3 flavour for common use in
 python 2 and python 3.
 '''
 
+# Add flake8 easy fixes -
+# After applying fixes, added file-wide noqa to suppress F401 since the
+#   entire purpose of this file is to import stuff for other files; the
+#   ': F401' at the end of '# flake8: noqa' is cosmetic only but
+#   semantic in nature to indicate that the file-level ignore was added
+#   specifically because of F401 -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-08-08
+
+# flake8: noqa: F401
+
 try:
   from configparser import ConfigParser
 except ImportError:
   from ConfigParser import SafeConfigParser as ConfigParser  # type: ignore
-from datetime import date, datetime
+
 import os
+from datetime import date, datetime
+
 try:
   from queue import Queue, PriorityQueue, Full as Queue_Full, Empty as Queue_Empty
 except ImportError:
   from Queue import Queue, Full as Queue_Full, Empty as Queue_Empty  # type: ignore
+
   try:
     from Queue import PriorityQueue  # type: ignore
+
   except ImportError:
     pass
+
 try:
   from subprocess import DEVNULL
+
 except ImportError:
   DEVNULL = os.open(os.devnull, os.O_RDWR)
+
 import sys
 from time import strptime
+
 try:
   from types import StringTypes  # type: ignore
 except ImportError:
@@ -39,13 +57,13 @@ except ImportError:
 __version__ = '20220523-post'
 
 DISTINFO = {
-    'keywords': ["python2", "python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': [],
+  'keywords': ["python2", "python3"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 2",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': [],
 }
 
 try:
@@ -103,10 +121,12 @@ else:
     return _sorted(iterable, None, key, reverse)
 
   input = raw_input
+
   from itertools import ifilter as filter, ifilterfalse as filterfalse  # type: ignore
-  from ._for2 import raise3, raise_from, exec_code, ustr, \
-                        bytes, BytesFile, joinbytes, \
-                        pack, unpack # type: ignore
+  from ._for2 import \
+    raise3, raise_from, exec_code, ustr, \
+    bytes, BytesFile, joinbytes, \
+    pack, unpack  # type: ignore
 
 try:
   from struct import iter_unpack
@@ -119,7 +139,7 @@ except ImportError:
     chunk_size = calcsize(fmt)
     if chunk_size < 1:
       raise ValueError(
-          "struct.calcsize(%r) gave %d, expected >= 1" % (fmt, chunk_size)
+        "struct.calcsize(%r) gave %d, expected >= 1" % (fmt, chunk_size)
       )
     offset = 0
     while offset < len(buffer):
@@ -129,6 +149,7 @@ except ImportError:
 # fill in missing pread with weak workalike
 try:
   pread = os.pread
+
 except AttributeError:
   # implement our own pread
   # NB: not thread safe!
@@ -154,8 +175,8 @@ except AttributeError:
 
 try:
   date_fromisoformat = date.fromisoformat
-except AttributeError:
 
+except AttributeError:
   def date_fromisoformat(datestr):
     ''' Placeholder for `date.fromisoformat`.
     '''
@@ -164,15 +185,15 @@ except AttributeError:
 
 try:
   datetime_fromisoformat = datetime.fromisoformat
-except AttributeError:
 
+except AttributeError:
   def datetime_fromisoformat(datestr):
     ''' Placeholder for `datetime.fromisoformat`.
     '''
     parsed = strptime(datestr, '%Y-%m-%dT%H:%M:%S')
     return datetime(
-        parsed.tm_year, parsed.tm_mon, parsed.tm_mday, parsed.tm_hour,
-        parsed.tm_min, parsed.tm_sec
+      parsed.tm_year, parsed.tm_mon, parsed.tm_mday, parsed.tm_hour,
+      parsed.tm_min, parsed.tm_sec
     )
 
 if __name__ == '__main__':

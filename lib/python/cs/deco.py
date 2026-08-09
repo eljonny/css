@@ -28,12 +28,12 @@ from cs.typingutils import is_optional
 __version__ = '20261016-post'
 
 DISTINFO = {
-    'keywords': ["python2", "python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': ['cs.gimmicks', 'cs.typingutils'],
+  'keywords': ["python3"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': ['cs.gimmicks', 'cs.typingutils'],
 }
 
 
@@ -97,6 +97,7 @@ def fmtdoc(func):
     fmtmap[f'{name}=='] = f'{func.__module__}.{name}={value!r}'
   func.__doc__ = func.__doc__.format_map(fmtmap)
   return func
+
 
 def decorator(deco=None, *, decorable=callable):
   ''' A decorator for decorator functions to support optional arguments
@@ -391,8 +392,8 @@ def contextdecorator(cmgrfunc):
     if isgeneratorfunction(func):
       if provide_context:
         raise ValueError(
-            "provide_context may not be true when func:%s is a generator" %
-            (func,)
+          "provide_context may not be true when func:%s is a generator" %
+          (func,)
         )
 
       def wrapped(*a, **kw):
@@ -475,19 +476,19 @@ def OBSOLETE(func, suggestion=None):
   '''
   callers = set()
   deprecation_message = "%s to %s:%d:%s()" % (
-      (
-          "OBSOLETE call" if suggestion is None else
-          ("OBSOLETE (suggest %r) call" % suggestion)
-      ),
-      (
-          func.__module__
-          if isinstance(func, type) else func.__code__.co_filename
-      ),
-      (
-          getattr(func, '__firstlineno__', 0)
-          if isinstance(func, type) else func.__code__.co_firstlineno
-      ),
-      func.__name__,
+    (
+      "OBSOLETE call" if suggestion is None else
+      ("OBSOLETE (suggest %r) call" % suggestion)
+    ),
+    (
+      func.__module__
+      if isinstance(func, type) else func.__code__.co_filename
+    ),
+    (
+      getattr(func, '__firstlineno__', 0)
+      if isinstance(func, type) else func.__code__.co_firstlineno
+    ),
+    func.__name__,
   )
 
   def OBSOLETE_func_wrapper(*args, **kwargs):
@@ -498,11 +499,11 @@ def OBSOLETE(func, suggestion=None):
     if caller not in callers:
       callers.add(caller)
       warning(
-          "%s, called from %s:%d:%s",
-          deprecation_message,
-          frame[0],
-          frame[1],
-          frame[2],
+        "%s, called from %s:%d:%s",
+        deprecation_message,
+        frame[0],
+        frame[1],
+        frame[2],
       )
     return func(*args, **kwargs)
 
@@ -514,7 +515,7 @@ def OBSOLETE(func, suggestion=None):
     pass
   else:
     OBSOLETE_func_wrapper = deprecated(deprecation_message)(
-        OBSOLETE_func_wrapper
+      OBSOLETE_func_wrapper
     )
 
   funcname = getattr(func, '__name__', str(func))
@@ -523,8 +524,8 @@ def OBSOLETE(func, suggestion=None):
   if suggestion:
     doc += ', suggestion: ' + suggestion
   return OBSOLETE_func_wrapper, dict(
-      __name__=f'@OBSOLETE({funcname})',
-      __doc__=f'{doc}\n\n{funcdoc}',
+    __name__=f'@OBSOLETE({funcname})',
+    __doc__=f'{doc}\n\n{funcdoc}',
   )
 
 
@@ -702,13 +703,13 @@ def observable_class(property_names, only_unequal=False):
           observer(self, attr, value)
         except Exception as e:  # pylint: disable=broad-except
           warning(
-              "%s.%s=%r: observer %s(...) raises: %s",
-              self,
-              val_attr,
-              value,
-              observer,
-              e,
-              exc_info=True
+            "%s.%s=%r: observer %s(...) raises: %s",
+            self,
+            val_attr,
+            value,
+            observer,
+            e,
+            exc_info=True
           )
 
     cls.report_observation = report_observation
@@ -829,15 +830,15 @@ def default_params(func, _strict=False, **param_defaults):
   defaulted_func.__name__ = func.__name__
   # TODO: get the indent from some aspect of stripped_dedent
   defaulted_func.__doc__ = '\n      '.join(
-      [
-          getattr(func, '__doc__', '') or '',
-          '',
-          'This function also accepts the following optional keyword parameters:',
-          *[
-              '* `%s`: default from `%s()`' % (param_name, param_default)
-              for param_name, param_default in sorted(param_defaults.items())
-          ],
-      ]
+    [
+      getattr(func, '__doc__', '') or '',
+      '',
+      'This function also accepts the following optional keyword parameters:',
+      *[
+        '* `%s`: default from `%s()`' % (param_name, param_default)
+        for param_name, param_default in sorted(param_defaults.items())
+      ],
+    ]
   )
   sig0 = signature(func)
   sig = sig0
@@ -850,8 +851,8 @@ def default_params(func, _strict=False, **param_defaults):
       pass
     else:
       modified_param = param.replace(
-          annotation=typing.Optional[param.annotation],
-          default=None if param_default is param.empty else param_default,
+        annotation=typing.Optional[param.annotation],
+        default=None if param_default is param.empty else param_default,
       )
     if modified_param is None:
       modified_param = param.replace()
@@ -950,6 +951,7 @@ uses_force = uses_cmd_options(force=False)
 uses_quiet = uses_cmd_options(quiet=False)
 uses_verbose = uses_cmd_options(verbose=False)
 
+
 @decorator
 def verbosity(func, verbosity_level: int):
   ''' A decorator to run `func` if the ambient verbosity is >= `verbosity_level`.
@@ -963,15 +965,18 @@ def verbosity(func, verbosity_level: int):
 
   return verbose_wrapper
 
+
 def verbose(func):
   ''' A decorator to run `func` if the ambient verbosity is >=1.
   '''
   return verbosity(func, 1)
 
+
 def vv(func):
   ''' A decorator to run `func` if the ambient verbosity is >=2.
   '''
   return verbosity(func, 2)
+
 
 # TODO: handle async functions
 # pylint: disable=too-many-statements
@@ -1093,8 +1098,8 @@ def promote(func, params=None, types=None):
     for param_name in params:
       if param_name not in sig.parameters:
         raise ValueError(
-            "@promote(%r,params=%r): no %r parameter in signature (sig.parameters=%r)"
-            % (func, params, param_name, dict(sig.parameters))
+          "@promote(%r,params=%r): no %r parameter in signature (sig.parameters=%r)"
+          % (func, params, param_name, dict(sig.parameters))
         )
   func_module = sys.modules[func.__module__]
 
@@ -1106,19 +1111,19 @@ def promote(func, params=None, types=None):
       return func_module.__dict__[annotation]
     except KeyError as e:
       module_keys = sorted(
-          filter(
-              lambda key: getattr(
-                  getattr(func_module, key, None), '__module__', None
-              ) == func.__module__, func_module.__dict__.keys()
-          )
+        filter(
+          lambda key: getattr(
+            getattr(func_module, key, None), '__module__', None
+          ) == func.__module__, func_module.__dict__.keys()
+        )
       )
       print("@promote: cannot resolve", annotation_s)
       breakpoint()
       raise ValueError(
-          f'@promote({func}): skip param {param_name}:{annotation_s!r}'
-          f': cannot be resolved from sys.modules[{func.__name__!r}]'
-          f', available keys [{",".join(module_keys)}]'
-          f': {e}'
+        f'@promote({func}): skip param {param_name}:{annotation_s!r}'
+        f': cannot be resolved from sys.modules[{func.__name__!r}]'
+        f', available keys [{",".join(module_keys)}]'
+        f': {e}'
       ) from e
 
   promotions = {}  # mapping of arg->(type,promote)
@@ -1156,13 +1161,13 @@ def promote(func, params=None, types=None):
     # we don't import cs.pfx (many dependencies!)
     # pylint: disable=unnecessary-lambda-assignment
     get_context = lambda: (
-        "@promote(%s.%s)(%s=%s:%r)" % (
-            func.__module__,
-            func.__name__,
-            param_name,
-            arg_value.__class__.__name__,
-            arg_value,
-        )
+      "@promote(%s.%s)(%s=%s:%r)" % (
+        func.__module__,
+        func.__name__,
+        param_name,
+        arg_value.__class__.__name__,
+        arg_value,
+      )
     )
     for param_name, (param, annotation, promote_method,
                      optional) in promotions.items():
@@ -1179,11 +1184,11 @@ def promote(func, params=None, types=None):
           annotation = promote_str_annotation(param_name, annotation)
         except ValueError as e:
           warning(
-              "%s: skip param %s, cannot resolve %r: %s",
-              get_context(),
-              param_name,
-              annotation,
-              e,
+            "%s: skip param %s, cannot resolve %r: %s",
+            get_context(),
+            param_name,
+            annotation,
+            e,
           )
           continue
       try:
@@ -1192,10 +1197,10 @@ def promote(func, params=None, types=None):
           continue
       except TypeError:
         warning(
-            "%s: skip param %s, annotation is not a type: %r",
-            get_context(),
-            param_name,
-            type(annotation),
+          "%s: skip param %s, annotation is not a type: %r",
+          get_context(),
+          param_name,
+          type(annotation),
         )
         continue
       try:
@@ -1216,8 +1221,8 @@ def promote(func, params=None, types=None):
                 as_value = as_annotation()
               except (TypeError, ValueError) as e:
                 raise TypeError(
-                    "%s: %s.%s(): %s" %
-                    (get_context(), param_name, as_method_name, e)
+                  "%s: %s.%s(): %s" %
+                  (get_context(), param_name, as_method_name, e)
                 ) from e
             else:
               # assuming a property or even a plain attribute
@@ -1330,7 +1335,7 @@ class Promotable:
       return cls(obj)
     except TypeError as e:
       raise TypeError(
-          f'cannot promote object of class {obj.__class__!r} to class {cls!r}'
-          f', last attempt of {cls.__name__}({obj.__class__.__name__}:{obj!r})'
-          f' raised {e.__class__.__name__}: {e}'
+        f'cannot promote object of class {obj.__class__!r} to class {cls!r}'
+        f', last attempt of {cls.__name__}({obj.__class__.__name__}:{obj!r})'
+        f' raised {e.__class__.__name__}: {e}'
       )

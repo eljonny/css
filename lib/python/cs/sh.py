@@ -21,20 +21,19 @@ import sys
 __version__ = '20260912.1-post'
 
 DISTINFO = {
-    'description':
-    "Convenience functions for constructing shell commands.",
-    'keywords': ["python2", "python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': [],
-    'entry_points': {
-        'console_scripts': {
-            'shqstr': 'cs.sh:main_shqstr'
-        },
+  'description':
+  "Convenience functions for constructing shell commands.",
+  'keywords': ["python3"],
+  'classifiers': [
+      "Programming Language :: Python",
+      "Programming Language :: Python :: 3",
+  ],
+  'install_requires': [],
+  'entry_points': {
+    'console_scripts': {
+      'shqstr': 'cs.sh:main_shqstr'
     },
+  },
 }
 
 # characters than do not need to be quoted

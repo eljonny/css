@@ -65,20 +65,19 @@ from cs.x import X
 __version__ = '20260912-post'
 
 DISTINFO = {
-    'description':
-    "Easy context prefixes for messages.",
-    'keywords': ["python2", "python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': [
-        'cs.deco',
-        'cs.py.func>=func_a_kw_fmt',
-        'cs.py3',
-        'cs.x',
-    ],
+  'description':
+  "Easy context prefixes for messages.",
+  'keywords': ["python3"],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': [
+    'cs.deco',
+    'cs.py.func>=func_a_kw_fmt',
+    'cs.py3',
+    'cs.x',
+  ],
 }
 
 DEFAULT_SEPARATOR = ': '
@@ -292,17 +291,17 @@ class Pfx:
         # now hack the exception attributes
         if not self.prefixify_exception(exc_value):
           True or print(
-              "warning: %s: %s:%s: message not prefixed: dir=%r" % (
-                  self._state.prefix, type(exc_value).__name__, exc_value,
-                  dir(exc_value)
-              ),
-              file=sys.stderr
+            "warning: %s: %s:%s: message not prefixed: dir=%r" % (
+              self._state.prefix, type(exc_value).__name__, exc_value,
+              dir(exc_value)
+            ),
+            file=sys.stderr
           )
     try:
       _state.pop()
     except IndexError as e:
       print(
-          "warning: %s.__exit__: _state.pop(): %s" % (type(self).__name__, e)
+        "warning: %s.__exit__: _state.pop(): %s" % (type(self).__name__, e)
       )
     if _state.trace:
       _state.trace(_state.prefix)
@@ -322,11 +321,11 @@ class Pfx:
           u = u % self.mark_args
         except TypeError as e:
           logging.warning(
-              "FORMAT CONVERSION: %s: %r %% %r",
-              e,
-              u,
-              self.mark_args,
-              exc_info=True
+            "FORMAT CONVERSION: %s: %r %% %r",
+            e,
+            u,
+            self.mark_args,
+            exc_info=True
           )
           u = u + ' % ' + repr(self.mark_args)
       self._umark = u
@@ -344,9 +343,9 @@ class Pfx:
         #   current_prefix, text.__class__, text, sys.exc_info())
         return text
       return (
-        current_prefix + DEFAULT_SEPARATOR + ustr(text, errors='replace')
-        # removed, makes messages unreadable
-        ##replace('\n', '\n  ' + current_prefix + DEFAULT_SEPARATOR)
+          current_prefix + DEFAULT_SEPARATOR + ustr(text, errors='replace')
+          # removed, makes messages unreadable
+          # replace('\n', '\n  ' + current_prefix + DEFAULT_SEPARATOR)
       )
     except (MemoryError, RecursionError):
       return text
@@ -406,12 +405,12 @@ class Pfx:
           vlen = len(value)
         except TypeError:
           print(
-              "warning: %s: %s.%s: " % (current_prefix, e, attr),
-              cls.prefixify(
-                  "do not know how to prefixify .%s=<%s>:%r" %
-                  (attr, type(value).__name__, value)
-              ),
-              file=sys.stderr
+            "warning: %s: %s.%s: " % (current_prefix, e, attr),
+            cls.prefixify(
+              "do not know how to prefixify .%s=<%s>:%r" %
+              (attr, type(value).__name__, value)
+            ),
+            file=sys.stderr
           )
           continue
         else:
@@ -427,19 +426,19 @@ class Pfx:
           value = t0(value)
         else:
           X(
-              "prefixify_exception: %s.%s.%s:%s.%s:%r is a different type from the new value:%s:%r",
-              e.__class__.__module__, e.__class__.__name__, attr,
-              ovalue.__class__.__module__, ovalue.__class__.__name__, ovalue,
-              value.__class__.__name__, value
+            "prefixify_exception: %s.%s.%s:%s.%s:%r is a different type from the new value:%s:%r",
+            e.__class__.__module__, e.__class__.__name__, attr,
+            ovalue.__class__.__module__, ovalue.__class__.__name__, ovalue,
+            value.__class__.__name__, value
           )
       try:
         setattr(e, attr + '_without_prefix', ovalue)
         setattr(e, attr, value)
       except AttributeError as e2:
         print(
-            "warning: %s: %s.%s: cannot set to %r: %s" %
-            (current_prefix, e, attr, value, e2),
-            file=sys.stderr
+          "warning: %s: %s.%s: cannot set to %r: %s" %
+          (current_prefix, e, attr, value, e2),
+          file=sys.stderr
         )
         continue
       did_prefix = True
@@ -531,9 +530,9 @@ class Pfx:
         L.log(level, msg, *args, **kwargs)
       except Exception as e:  # pylint: disable=broad-except
         print(
-            "%s: exception logging to %s msg=%r, args=%r, kwargs=%r: %s" %
-            (self._state.prefix, L, msg, args, kwargs, e),
-            file=sys.stderr
+          "%s: exception logging to %s msg=%r, args=%r, kwargs=%r: %s" %
+          (self._state.prefix, L, msg, args, kwargs, e),
+          file=sys.stderr
         )
 
   @logging_wrapper
@@ -606,8 +605,8 @@ class PfxCallInfo(Pfx):
   def __init__(self):
     grandcaller, caller, _ = traceback.extract_stack(None, 3)
     Pfx.__init__(
-        self, "at %s:%d %s(), called from %s:%d %s()", caller[0], caller[1],
-        caller[2], grandcaller[0], grandcaller[1], grandcaller[2]
+      self, "at %s:%d %s(), called from %s:%d %s()", caller[0], caller[1],
+      caller[2], grandcaller[0], grandcaller[1], grandcaller[2]
     )
 
 
@@ -653,9 +652,9 @@ def pfx(func, message=None, *message_args):
     ''' Compute the message args to use inside the called function.
     '''
     return [
-        a[ma] if isinstance(ma, int) else
-        kw[ma] if isinstance(ma, str) else "%s:%r" %
-        (ma.__class__.__name__, repr(ma)) for ma in message_args
+      a[ma] if isinstance(ma, int) else
+      kw[ma] if isinstance(ma, str) else "%s:%r" %
+      (ma.__class__.__name__, repr(ma)) for ma in message_args
     ]
 
   if isgeneratorfunction(func):
@@ -746,8 +745,8 @@ def pfx_method(method, use_str=False, with_args=False):
     ''' Prefix messages with "type_name.method_name" or "str(self).method_name".
     '''
     classref = (
-        self
-        if use_str else self.__name__ if isclass(self) else type(self).__name__
+      self
+      if use_str else self.__name__ if isclass(self) else type(self).__name__
     )
     pfxfmt, pfxargs = func_a_kw_fmt(method, *a, **kw)
     with Pfx("%s." + pfxfmt, classref, *pfxargs):
