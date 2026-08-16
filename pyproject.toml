@@ -1,7 +1,7 @@
 [build-system]
 requires = [
-    "setuptools>=77.0.3",
-    "setuptools-scm[simple]>=9.2",
+    "setuptools",
+    "setuptools-scm[simple]",
     "wheel",
     "cython"
 ]
@@ -9,12 +9,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cs.app.osx.plist"
-description = """
-    This is a repackaging of the PyPI module with all the dependencies
-    included.
-    It has been improved to use libimobiledevice's libplist instead of
-    calling the Apple-specific plutil CLI for binary plist parsing.
-    """
+description = "This is a repackaging of the PyPI module with all the dependencies included. It has been improved to use libimobiledevice's libplist instead of calling the Apple-specific plutil CLI for binary plist parsing."
 dynamic = ["version"]
 readme = "README.md"
 license = "LicenseRef-CSScriptsLic"
@@ -91,14 +86,8 @@ py-modules = [
     "cs.py.func",
     "cs.py3._for3", # Has tests
     "cs.seq", # Has tests
-    "cs.sh",
     "cs.typingutils",
     "cs.x",
-]
-ext-modules = [
-    {name = "libplist-cython", sources = [
-        "libplist/cython/plist.pyx"
-    ]}
 ]
 
 [tool.setuptools.package-dir]

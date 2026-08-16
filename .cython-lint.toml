@@ -1,0 +1,4 @@
+[tool.cython-lint]
+ignore = [
+    'E501',
+]

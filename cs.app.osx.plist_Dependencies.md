@@ -41,4 +41,3 @@ These are the dependencies for the cs plist lib.
     - cs.ansi_colour
       - ...
     - cs.gimmicks
-- cs.sh

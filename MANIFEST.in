@@ -1,0 +1,86 @@
+recursive-include lib/python/cs __init__.py
+recursive-include lib/python/cs plist.py ansi_colour.py obj.py x.py
+recursive-include lib/python/cs context.py dateutils.py deco.py pfx.py
+recursive-include lib/python/cs gimmicks.py lex.py logutils.py seq.py
+recursive-include lib/python/cs func.py typingutils.py
+recursive-include lib/python/cs lex_tests.py obj_tests.py seq_tests.py
+recursive-include libplist/cython *.c *.h *.pxd *.pyx
+recursive-include libplist/src *.c *.h
+include .cython-lint.toml .flake8 .hsf-*.* .markdownlint.jsonc
+include .python-version cs.app.osx.plist_Dependencies.md LICENSE.md
+include pyproject.toml README.md setup.py tox.toml venv-requirements.txt
+include lib/python/cs/app/osx/plist.py
+include lib/python/cs/py3/_for3.py 
+include lib/python/cs/py3/_tests.py
+prune 3rd-party-conflicts
+prune *bin*
+prune cisra
+prune csiro
+prune defunct*
+prune doc
+prune etc
+prune hacks
+prune html
+prune lib/js
+prune lib/perl
+prune lib/python/cs/app/beyonwiz
+prune lib/python/cs/app/myke
+prune lib/python/cs/app/pilfer
+prune lib/python/cs/app/tagger
+prune lib/python/cs/cloud
+prune lib/python/cs/ebooks
+prune lib/python/cs/m3
+prune lib/python/cs/mixin
+prune lib/python/cs/nodedb
+prune lib/python/cs/panda3d_utils
+prune lib/python/cs/vcs
+prune lib/python/cs/vt
+prune make-into-shell-functions
+prune man
+prune release
+prune stubs
+prune unsw
+recursive-exclude lib/python README-* *.md *rules* *.ini
+recursive-exclude lib/python/cs alg*.py applescript*.py ascii_art*.py
+recursive-exclude lib/python/cs binary*.py buffer*.py cdrip*.py fs*.py
+recursive-exclude lib/python/cs bs4utils*.py cache*.py chunkyString*.py
+recursive-exclude lib/python/cs cherryhttpsrv*.py clockutils*.py env*.py
+recursive-exclude lib/python/cs cmdutils*.py configutils*.py cs_json*.py
+recursive-exclude lib/python/cs cryptutils*.py csbug*.py csvutils*.py
+recursive-exclude lib/python/cs curlytplt*.py dbdigraph*.py dbutils*.py
+recursive-exclude lib/python/cs debug*.py desktop*.py distinfo*.py
+recursive-exclude lib/python/cs djutils*.py dockerutils*.py edit*.py
+recursive-exclude lib/python/cs excutils*.py delta*.py io*.py ebml*.py
+recursive-exclude lib/python/cs ffmpegutils*.py filestate*.py graph*.py
+recursive-exclude lib/python/cs fileutils*.py urlutils*.py tmuxutils*.py
+recursive-exclude lib/python/cs gui*.py gvutils*.py gzindex*.py hier*.py
+recursive-exclude lib/python/cs hashindex*.py hashutils*.py html*.py
+recursive-exclude lib/python/cs httpsrv*.py idset*.py imageutils*.py
+recursive-exclude lib/python/cs id3*.py inttypes*.py ip*.py kyoto*.py
+recursive-exclude lib/python/cs iso14496*.py lastvalue*.py later*.py
+recursive-exclude lib/python/cs mail*.py mappings*.py mediainfo*.py
+recursive-exclude lib/python/cs metadb*.py mplutils*.py naysync*.py
+recursive-exclude lib/python/cs numeric*.py onttags*.py packetstream*.py
+recursive-exclude lib/python/cs pipeline*.py pop3*.py mp3*.py net*.py
+recursive-exclude lib/python/cs predicate*.py progress*.py psutils*.py
+recursive-exclude lib/python/cs queues*.py randutils*.py range*.py
+recursive-exclude lib/python/cs resources*.py result*.py rfc2047*.py
+recursive-exclude lib/python/cs rfc2616*.py secret*.py semantics*.py
+recursive-exclude lib/python/cs serialise*.py service_api*.py wol*.py
+recursive-exclude lib/python/cs sharedfile*.py shims*.py socketutils*.py
+recursive-exclude lib/python/cs sparse*.py splink*.py sqltags*.py sh*.py
+recursive-exclude lib/python/cs sqlalchemy_utils*.py tagset*.py wini*.py
+recursive-exclude lib/python/cs tail*.py tarutils*.py taskqueue*.py
+recursive-exclude lib/python/cs testutils*.py threads*.py units*.py
+recursive-exclude lib/python/cs timeseries*.py timeutils*.py tty*.py
+recursive-exclude lib/python/cs ts*.py upd*.py x11*.py
+recursive-exclude lib/python/cs webservice*.py
+recursive-exclude lib/python/cs/app/osx defaults*.py itunes*.py misc*.py
+recursive-exclude lib/python/cs/app/osx spaces*.py
+recursive-exclude lib/python/cs/py classes*.py doc*.py modules*.py
+recursive-exclude lib/python/cs/py stack*.py
+exclude .env.sh .envrc-css .freshmeatrc .hg-cs-category .hgignore
+exclude .hgtags .job .ruff.toml .style.yapf Mykefile TODO*
+exclude deploy.rsync-include env.sh pkg_tags pytest.ini
+exclude lib/python/cs/app/*.py
+exclude lib/python/cs/py3/_for2.py
