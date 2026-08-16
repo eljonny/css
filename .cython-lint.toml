@@ -2,3 +2,7 @@
 ignore = [
     'E501',
 ]
+
+# Add cython-lint configuration -
+# For assistance with build and improving the module -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-08-15

@@ -1,5 +1,6 @@
 # Source - https://stackoverflow.com/a/75753567
-# Posted by Salvatore Cosentino, modified by community. See post 'Timeline' for change history
+# Posted by Salvatore Cosentino, modified by community.
+# See post 'Timeline' for change history
 # Retrieved 2026-08-09, License - CC BY-SA 4.0
 
 from setuptools import setup
@@ -9,6 +10,7 @@ from Cython.Compiler import Options
 # Add setup.py for libplist Cython extension build -
 # libplist Python bindings -
 # Modified significantly from the SO source -
+# The MANIFEST.in is for the setuptools build (2026-08-15) -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-08-09
 
 Options.annotate = True
