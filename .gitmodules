@@ -1,6 +1,6 @@
 [submodule "libplist"]
 	path = libplist
-	url = https://github.com/libimobiledevice/libplist.git
+	url = https://github.com/eljonny/libplist.git
 
 # Add gitmodules - Add libplist as a submodule pinned at 2.7.0-hsf -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-08-15
