@@ -1,7 +1,6 @@
 env_list = [
     { prefix = "3.", start = 10 },
-    "test-3.10",
-    "test-3.14",
+    { prefix = "test-3.", start = 10 },
     "coverage",
     "lint",
 ]
