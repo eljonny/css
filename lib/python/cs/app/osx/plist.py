@@ -8,12 +8,13 @@
 import base64
 import os
 import plistlib
-import shutil
 import subprocess
 import tempfile
 from datetime import datetime, timezone
 
-import cs.sh
+from plist import FMT_BINARY, FMT_XML
+from plist import load, loads, dump
+
 from cs.logutils import warning
 from cs.pfx import Pfx
 
@@ -22,9 +23,10 @@ try:
 except ImportError:
   import xml.etree.ElementTree as etree
 
-__version__ = '20231129-post'
+__version__ = '20260816'
 
 # Add flake8 fixes - easy fixes -
+# Convert to using libplist Cython bindings (2026-08-16) -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
 
 DISTINFO = {
@@ -35,16 +37,9 @@ DISTINFO = {
   ],
   'install_requires': [
     'cs.logutils',
-    'cs.pfx',
-    'cs.sh',
+    'cs.pfx'
   ],
 }
-
-
-def is_iphone():
-  ''' Test if we're on an iPhone.
-  '''
-  return os.uname()[4].startswith('iPhone')
 
 
 def import_as_etree(plist):
@@ -363,43 +358,40 @@ class ObjectClassInstance:
   def values(self):
     return self.value.values()
 
-####################################################################################
-# Old routines written for use inside my jailbroken iPhone.
-#
-
 
 def readPlist(path, binary=False):
-  ''' An old routine I made to use inside my jailbroken iPhone.
-  '''
   if not binary:
-    return plistlib.readPlist(path)
+    with open(path, 'rt') as path_file:
+      return plistlib.loads(path_file.read(), fmt=plistlib.FMT_XML)
+
   tfd, tpath = tempfile.mkstemp()
   os.close(tfd)
-  if is_iphone():
-    shutil.copyfile(path, tpath)
-    plargv = ('plutil', '-c', 'xml1', tpath)
-  else:
-    plargv = ('plutil', '-convert', 'xml1', '-o', tpath, path)
-  os.system("set -x; exec " + " ".join(cs.sh.quote(plargv)))
-  pl = plistlib.readPlist(tpath)
+
+  with open(path, 'rb') as bplist:
+    plist = load(bplist, fmt=FMT_BINARY)
+    with open(tpath, 'wt') as plist_out_fp:
+      dump(plist, plist_out_fp, fmt=FMT_XML)
+
+  with open(tpath, 'rt') as xmlplist:
+    pl = plistlib.loads(xmlplist.read(), fmt=plistlib.FMT_XML)
+
   os.unlink(tpath)
+
   return pl
 
 
 def writePlist(rootObj, path, binary=False):
-  ''' An old routine I made to use inside my jailbroken iPhone.
-  '''
   if not binary:
-    return plistlib.writePlist(rootObj, path)
+    with open(path, 'wb') as path_file:
+      return plistlib.dump(rootObj, path_file, fmt=plistlib.FMT_XML)
+
   tfd, tpath = tempfile.mkstemp()
   os.close(tfd)
-  plistlib.writePlist(rootObj, tpath)
-  if is_iphone():
-    shutil.copyfile(path, tpath)
-    plargv = ('plutil', '-c', 'binary1', tpath)
-  else:
-    plargv = ('plutil', '-convert', 'binary1', '-o', path, tpath)
-  os.system("set -x; exec " + " ".join(cs.sh.quote(plargv)))
-  if is_iphone():
-    shutil.copyfile(tpath, path)
-  return None
+
+  with open(tpath, 'wb') as tpath_file:
+    plistlib.dump(rootObj, tpath_file, fmt=plistlib.FMT_XML)
+
+  with open(tpath, 'rb') as written_plist:
+    plist = loads(written_plist.read(), fmt=FMT_XML)
+    with open(path, 'wb') as bplist_writer:
+      dump(plist, bplist_writer, fmt=FMT_BINARY)
