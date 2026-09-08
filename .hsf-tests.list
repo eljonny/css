@@ -1,4 +1,5 @@
 cs/lex_tests.py
 cs/obj_tests.py
 cs/seq_tests.py
+cs/app/osx/plist_tests.py
 cs/py3/_tests.py
