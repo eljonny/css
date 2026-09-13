@@ -20,8 +20,6 @@ classifiers = [
     "Environment :: Other Environment",
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
-    "License :: Freely Distributable",
-    "License :: Other/Proprietary License",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: C",
     "Programming Language :: Cython",
