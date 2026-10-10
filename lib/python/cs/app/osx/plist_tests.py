@@ -16,7 +16,6 @@ class TestPlist(unittest.TestCase):
   file = Path(__file__).resolve()
   TEST_DATA_DIR = f"{file.parents[5]}/libplist/test/data"
   EXCLUDE_FILES = [
-    '1.plist',
     'invalid_tag.plist',
     'amp.plist',
     'malformed_dict.bplist',
@@ -58,10 +57,7 @@ class TestPlist(unittest.TestCase):
 
   def testBadReadPlist(self):
     for xmlPlist in self.test_neg_xml:
-      if Path(xmlPlist).name in ('1.plist'):
-        with pytest.raises(ValueError):
-          readPlist(xmlPlist)
-      elif Path(xmlPlist).name in (
+      if Path(xmlPlist).name in (
           'invalid_tag.plist',
           'amp.plist'):
         with pytest.raises(ExpatError):
