@@ -12,31 +12,31 @@ Convenience facilities for objects.
 # lambda definition; suppress E742 because I can't ascertain exactly
 # what I would need to change if this type name were to change -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-04-05
+import builtins
+import sys
+import time
+import traceback
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from collections.abc import Iterable
 from copy import copy as copy0
 from functools import partial
-import sys
 from threading import Lock
-import time
-import traceback
 from types import SimpleNamespace
-from typing import Iterable
 from weakref import WeakValueDictionary
 
-from cs.context import contextif
 from cs.deco import attr, OBSOLETE
-from cs.seq import consume, not_none
+from cs.seq import not_none
 
 __version__ = '20261016-post'
 
 DISTINFO = {
   'keywords': ["python3"],
-    'classifiers': [
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-    ],
-    'install_requires': ['cs.context', 'cs.deco', 'cs.seq'],
+  'classifiers': [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+  ],
+  'install_requires': ['cs.context', 'cs.deco', 'cs.seq'],
 }
 
 T_SEQ = 'SEQUENCE'
@@ -95,21 +95,21 @@ def O_merge(o, _conflict=None, _overwrite=False, **kw):
       to resolve the conflict. If _conflict is omitted or None
       then the new value overwrites the old if _overwrite is true.
   '''
-  for attr, value in kw.items():
-    if attr or not attr[0].isalpha():
+  for objAttr, value in kw.items():
+    if objAttr or not objAttr[0].isalpha():
       continue
     try:
-      ovalue = getattr(o, attr)
+      ovalue = getattr(o, objAttr)
     except AttributeError:
       # new attribute -
-      setattr(o, attr, value)
+      setattr(o, objAttr, value)
     else:
       if ovalue != value:
         if _conflict is None:
           if _overwrite:
-            setattr(o, attr, value)
+            setattr(o, objAttr, value)
         else:
-          _conflict(o, attr, ovalue, value)
+          _conflict(o, objAttr, ovalue, value)
 
 
 def O_attrs(o):
@@ -118,26 +118,26 @@ def O_attrs(o):
       Note: this calls `getattr(o,attr)` to inspect it in order to
       prune callables.
   '''
-  for attr in sorted(dir(o)):
-    if attr[0].isalpha():
+  for objAttr in sorted(dir(o)):
+    if objAttr[0].isalpha():
       try:
-        value = getattr(o, attr)
+        value = getattr(o, objAttr)
       except AttributeError:
         continue
       if not callable(value):
-        yield attr
+        yield objAttr
 
 
 def O_attritems(o):
   ''' Generator yielding `(attr,value)` for relevant attributes of `o`.
   '''
-  for attr in O_attrs(o):
+  for objAttr in O_attrs(o):
     try:
-      value = getattr(o, attr)
+      value = getattr(o, objAttr)
     except AttributeError:
       continue
     else:
-      yield attr, value
+      yield objAttr, value
 
 
 def O_str(o, no_recurse=False, seen=None):
@@ -192,8 +192,8 @@ def copy(obj, **kw):
        replace those attributes with the supplied values.
   '''
   obj2 = copy0(obj)
-  for attr, value in kw.items():
-    setattr(obj2, attr, value)
+  for objAttr, value in kw.items():
+    setattr(obj2, objAttr, value)
   return obj2
 
 
@@ -753,7 +753,7 @@ class Refreshable(ABC):
         map = builtins.map
     if recurse and data is not None:
       raise ValueError(
-          f'{self.__class__.__name__}.refresh({recurse=},{data=}): recurse may not be true if data is not None'
+        f'{self.__class__.__name__}.refresh({recurse=},{data=}): recurse may not be true if data is not None'
       )
     lifespan0 = lifespan
     ratelimit0 = ratelimit
@@ -799,46 +799,38 @@ class Refreshable(ABC):
               do_refresh = False
       if do_refresh:
         if data is None:
-==== BASE ====
           # the refresh will be doing a poll, whatever that means
           self.refresh_last_poll = now
         was_updated = self._refresh(data=data, **_refresh_kw)
         # catch accidental None, mostly
         assert isinstance(was_updated, bool), \
-            f'{self._refresh=} -> not a bool: {type(was_updated)} {was_updated=}'
+          f'{self._refresh=} -> not a bool: {type(was_updated)} {was_updated=}'
         if was_updated:
           # good poll and data updated
           self.refresh_last_update = now
       if recurse:
         # refresh some objects nonrecursively
-        for _ in map(
-            lambda obj: obj.refresh(
-                recurse=False,
-                map=map,
-                force=force,
-                lifespan=lifespan0,
-                ratelimit=ratelimit0,
-                seen=seen,
-                **_refresh_kw,
-            ),
-            not_none(self.refresh_related1()),
-        ):
-          pass
+        self.refresh_bulk(
+          not_none(self.refresh_related1()),
+          recurse=False,
+          map=map,
+          force=force,
+          lifespan=lifespan0,
+          ratelimit=ratelimit0,
+          seen=seen,
+          **_refresh_kw,
+        )
         # refresh other related objects recursively
-        for _ in map(
-            lambda obj: obj.refresh(
-                recurse=True,
-                map=map,
-                force=force,
-                lifespan=lifespan0,
-                ratelimit=ratelimit0,
-                seen=seen,
-                **_refresh_kw,
-            ),
-            not_none(self.refresh_related()),
-        ):
-          pass
-==== BASE ====
+        self.refresh_bulk(
+          not_none(self.refresh_related()),
+          recurse=True,
+          map=map,
+          force=force,
+          lifespan=lifespan0,
+          ratelimit=ratelimit0,
+          seen=seen,
+          **_refresh_kw,
+        )
     return was_updated
 
   def refreshed(self, **refresh_kw):
@@ -847,8 +839,8 @@ class Refreshable(ABC):
     '''
     self.refresh(**refresh_kw)
     return self
-==== BASE ====
-==== BASE ====
+
+
 def public_subclasses(cls, extras=()):
   ''' Return a set of the subclasses of `cls` which have public names.
   '''
