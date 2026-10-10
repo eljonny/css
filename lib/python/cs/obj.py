@@ -25,7 +25,7 @@ from threading import Lock
 from types import SimpleNamespace
 from weakref import WeakValueDictionary
 
-from cs.deco import attr, OBSOLETE
+from cs.deco import OBSOLETE, attr
 from cs.seq import not_none
 
 __version__ = '20261016-post'
@@ -761,9 +761,8 @@ class Refreshable(ABC):
     with Refreshable.refresh._lock:
       if seen is None:
         seen = set()
-      else:
-        if key in seen:
-          return False
+      elif key in seen:
+        return False
     seen.add(key)
     if ratelimit is None:
       # optional instance attribute

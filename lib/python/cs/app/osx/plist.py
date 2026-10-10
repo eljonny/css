@@ -12,8 +12,7 @@ import subprocess
 import tempfile
 from datetime import datetime, timezone
 
-from plist import FMT_BINARY, FMT_XML
-from plist import load, loads, dump
+from plist import FMT_BINARY, FMT_XML, dump, load, loads
 
 from cs.logutils import warning
 from cs.pfx import Pfx
@@ -361,7 +360,7 @@ class ObjectClassInstance:
 
 def readPlist(path, binary=False):
   if not binary:
-    with open(path, 'rt') as path_file:
+    with open(path) as path_file:
       return plistlib.loads(path_file.read(), fmt=plistlib.FMT_XML)
 
   tfd, tpath = tempfile.mkstemp()
@@ -369,10 +368,10 @@ def readPlist(path, binary=False):
 
   with open(path, 'rb') as bplist:
     plist = load(bplist, fmt=FMT_BINARY)
-    with open(tpath, 'wt') as plist_out_fp:
+    with open(tpath, 'w') as plist_out_fp:
       dump(plist, plist_out_fp, fmt=FMT_XML)
 
-  with open(tpath, 'rt') as xmlplist:
+  with open(tpath) as xmlplist:
     pl = plistlib.loads(xmlplist.read(), fmt=plistlib.FMT_XML)
 
   os.unlink(tpath)
