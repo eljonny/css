@@ -6,7 +6,9 @@
 
 import sys
 import unittest
-from cs.seq import imerge, onetoone, onetomany, Seq
+
+from cs.seq import Seq, imerge, onetomany, onetoone
+
 
 class TestSeq(unittest.TestCase):
   ''' Tests for `cs.seq.Seq`.

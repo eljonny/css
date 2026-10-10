@@ -7,7 +7,9 @@
 
 import sys
 import unittest
+
 from cs.obj import SingletonMixin
+
 
 class TestSingletonMixin(unittest.TestCase):
   ''' Testing `SingletonMixin`.

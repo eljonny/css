@@ -6,8 +6,8 @@
 
 import sys
 import unittest
-from . import bytes
 
+from . import bytes
 
 # Add flake8 fixes - easy fixes -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-08-08

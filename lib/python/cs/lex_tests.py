@@ -12,13 +12,15 @@
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-08-02
 
 import sys
-from functools import partial
 import unittest
+from functools import partial
+
+from cs.py3 import bytes
 
 from .lex import (
-  FormatAsError,
-  FormatableMixin,
   SLOSH_CHARMAP,
+  FormatableMixin,
+  FormatAsError,
   get_dotted_identifier,
   get_envvar,
   get_identifier,
@@ -28,8 +30,6 @@ from .lex import (
   texthexify,
   untexthexify,
 )
-
-from cs.py3 import bytes
 
 # from cs.logutils import X
 
