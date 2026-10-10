@@ -1,4 +1,3 @@
-import pytest
 import tempfile
 import unittest
 from fnmatch import fnmatch
@@ -6,12 +5,14 @@ from os import close, unlink, walk
 from pathlib import Path
 from xml.parsers.expat import ExpatError
 
+import pytest
+
 from .plist import readPlist, writePlist
 
 
 class TestPlist(unittest.TestCase):
-  ''' Unit tests for: cs.app.osx.plist
-  '''
+  """Unit tests for: cs.app.osx.plist
+  """
 
   file = Path(__file__).resolve()
   TEST_DATA_DIR = f"{file.parents[5]}/libplist/test/data"
@@ -23,8 +24,8 @@ class TestPlist(unittest.TestCase):
   ]
 
   def setUp(self):
-    ''' Test setup.
-    '''
+    """Test setup.
+    """
     self.test_files_bin = []
     self.test_files_xml = []
     self.test_neg_bin = []
@@ -36,16 +37,15 @@ class TestPlist(unittest.TestCase):
             self.test_files_xml.append(f"{dirpath}/{filename}")
           elif fnmatch(filename, "*.bplist"):
             self.test_files_bin.append(f"{dirpath}/{filename}")
-        else:
-          if fnmatch(filename, "*.plist"):
-            self.test_neg_xml.append(f"{dirpath}/{filename}")
-          elif fnmatch(filename, "*.bplist"):
-            self.test_neg_bin.append(f"{dirpath}/{filename}")
+        elif fnmatch(filename, "*.plist"):
+          self.test_neg_xml.append(f"{dirpath}/{filename}")
+        elif fnmatch(filename, "*.bplist"):
+          self.test_neg_bin.append(f"{dirpath}/{filename}")
       break
 
   def tearDown(self):
-    ''' Undo test setup.
-    '''
+    """Undo test setup.
+    """
 
   def testReadPlist(self):
     for xmlPlist in self.test_files_xml:

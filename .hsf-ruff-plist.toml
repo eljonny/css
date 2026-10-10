@@ -1,0 +1,81 @@
+exclude = [
+    '.hg',
+    '.git',
+    '.pyenv',
+    '__pycache__',
+    '.pytest_cache',
+    '.ruff_cache',
+    '.tox',
+    '.venv',
+    'dist',
+    'logs',
+    '**/__pycache__',
+    '**/*.egg-info',
+    "hsf-coverage",
+    "hsf-cs.app.osx.plist-coverage.*",
+    ".hsf-coverage",
+]
+
+include = [
+    "lib/python/cs/app/osx/plist.py",
+    "lib/python/cs/app/osx/plist_tests.py",
+]
+
+indent-width = 2
+line-length = 72
+respect-gitignore = true
+target-version = "py310"
+
+[lint]
+extend-select = [
+    "C", # mccabe
+    "D", # pydocstyle
+    "E", # pycodestyle
+    "F", # pyflakes
+    "FLY", # flynt
+    "FURB", # refurb
+    "I", # isort
+    "N", # pep8-naming
+    "NPY", # numpy specific rules
+    "PD", # pandas-vet
+    "PERF", # Perflint
+    "PGH", # pygrep-hooks
+    "PL", # pylint
+    "PLC", # pylint convention
+    "PLE", # pylint error
+    "PLR", # pylint refactor
+    "PLW", # pylint warning
+    "RUF", # ruff specific rules
+    "TRY", # tryceratops
+    "UP", # pyupgrade
+    "W", # warning
+]
+ignore = [
+]
+
+flake8-quotes.docstring-quotes = "single"
+flake8-quotes.inline-quotes = "double"
+flake8-quotes.multiline-quotes = "single"
+
+[lint.mccabe]
+max-complexity = 15
+
+[lint.pep8-naming]
+extend-ignore-names = [
+    "setUp",
+    "tearDown",
+    "test*"
+]
+
+[lint.pylint]
+max-args = 5
+max-branches = 12
+max-statements = 45
+
+[format]
+indent-style = "space"
+quote-style = "preserve"
+
+# Add .hsf-ruff-plist.toml for module-specific ruff linting -
+# Stricter on the plist file itself and corresponding tests -
+# Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-10-10

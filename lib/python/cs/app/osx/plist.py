@@ -1,9 +1,9 @@
 #!/usr/bin/python
 #
 
-''' Some simple MacOS plist facilities.
-    Supports binary plist files, which the stdlib `plistlib` module does not.
-'''
+"""Some simple MacOS plist facilities.
+Supports binary plist files, which the stdlib `plistlib` module does not.
+"""
 
 import base64
 import os
@@ -42,12 +42,12 @@ DISTINFO = {
 
 
 def import_as_etree(plist):
-  ''' Load an Apple plist and return an etree.Element.
+  """Load an Apple plist and return an etree.Element.
 
-      Paramaters:
-      * `plist`: the source plist: data if `bytes`, filename if `str`,
-        otherwise a file object open for binary read.
-  '''
+  Paramaters:
+  * `plist`: the source plist: data if `bytes`, filename if `str`,
+    otherwise a file object open for binary read.
+  """
   if isinstance(plist, bytes):
     # read bytes as a data stream
     # write to temp file, decode using plutil
@@ -74,13 +74,15 @@ def import_as_etree(plist):
 
 
 def ingest_plist(plist, recurse=False, resolve=False):
-  ''' Ingest an Apple plist and return as a `PListDict`.
-      Trivial wrapper for `import_as_etree` and `ingest_plist_etree`.
+  """Ingest an Apple plist and return as a `PListDict`.
+  Trivial wrapper for `import_as_etree` and `ingest_plist_etree`.
 
-      Parameters:
-      * `recurse`: unpack any `bytes` objects as plists
-      * `resolve`: resolve unpacked `bytes` plists' `'$objects'` entries
-  '''
+  Parameters
+  ----------
+  * `recurse`: unpack any `bytes` objects as plists
+  * `resolve`: resolve unpacked `bytes` plists' `'$objects'` entries
+
+  """
   if resolve and not recurse:
     raise ValueError("resolve true but recurse false")
   with Pfx("ingest_plist(%r)", plist):
@@ -97,14 +99,16 @@ def ingest_plist(plist, recurse=False, resolve=False):
 
 
 def export_xml_to_plist(E, fp=None, fmt='binary1'):
-  ''' Export the content of an `etree.Element` to a plist file.
+  """Export the content of an `etree.Element` to a plist file.
 
-      Parameters:
-      * `E`: the source `etree.Element`.
-      * `fp`: the output file or filename (if a str).
-      * `fmt`: the output format, default `"binary1"`.
-        The format must be a valid value for the `-convert` option of plutil(1).
-  '''
+  Parameters
+  ----------
+  * `E`: the source `etree.Element`.
+  * `fp`: the output file or filename (if a str).
+  * `fmt`: the output format, default `"binary1"`.
+    The format must be a valid value for the `-convert` option of plutil(1).
+
+  """
   if isinstance(fp, str):
     with open(fp, "wb") as ofp:
       return export_xml_to_plist(E, ofp, fmt=fmt)
@@ -122,10 +126,10 @@ def export_xml_to_plist(E, fp=None, fmt='binary1'):
 
 
 def ingest_plist_etree(plist_etree):
-  ''' Recursively a plist's `ElementTree` into a native Python structure.
-      This returns a `PListDict`, a mapping of the plists's top dict
-      with attribute access to key values.
-  '''
+  """Recursively a plist's `ElementTree` into a native Python structure.
+  This returns a `PListDict`, a mapping of the plists's top dict
+  with attribute access to key values.
+  """
   root = plist_etree.getroot()
   if root.tag != 'plist':
     raise ValueError("%r root Element is not a plist" % (root,))
@@ -134,9 +138,9 @@ def ingest_plist_etree(plist_etree):
 
 # pylint: disable=too-many-return-statements
 def ingest_plist_elem(e):
-  ''' Ingest a plist `Element`, converting various types to native Python objects.
-      Unhandled types remain as the original `Element`.
-  '''
+  """Ingest a plist `Element`, converting various types to native Python objects.
+  Unhandled types remain as the original `Element`.
+  """
   if e.tag == 'dict':
     return ingest_plist_dict(e)
   if e.tag == 'array':
@@ -161,8 +165,8 @@ def ingest_plist_elem(e):
 
 
 def ingest_plist_array(pa):
-  ''' Ingest a plist <array>, returning a Python list.
-  '''
+  """Ingest a plist <array>, returning a Python list.
+  """
   if pa.tag != 'array':
     raise ValueError("not an <array>: %r" % (pa,))
   a = []
@@ -173,8 +177,8 @@ def ingest_plist_array(pa):
 
 
 def ingest_plist_dict(pd):
-  ''' Ingest a plist <dict> Element, returning a PListDict.
-  '''
+  """Ingest a plist <dict> Element, returning a PListDict.
+  """
   if pd.tag != 'dict':
     raise ValueError("not a <dict>: %r" % (pd,))
   d = PListDict()
@@ -195,10 +199,10 @@ def ingest_plist_dict(pd):
 
 
 class PListDict(dict):
-  ''' A mapping for a plist, subclassing `dict`, which also allows
-      access to the elements by attribute if that does not conflict
-      with a `dict` method.
-  '''
+  """A mapping for a plist, subclassing `dict`, which also allows
+  access to the elements by attribute if that does not conflict
+  with a `dict` method.
+  """
 
   def __getattr__(self, attr):
     if attr[0].isalpha():
@@ -218,9 +222,9 @@ class PListDict(dict):
 
 # pylint: disable=too-many-statements.too-many-branches,too-many-nested-blocks,too-many-locals
 def resolve_object(objs, i):
-  ''' Resolve an object definition from structures like an iPhoto album
-      queryData object list.
-  '''
+  """Resolve an object definition from structures like an iPhoto album
+  queryData object list.
+  """
   o = objs[i]
   if isinstance(o, (str, int, bool, float, ObjectClassDefinition, ObjectClassInstance)):
     return o
@@ -288,9 +292,9 @@ def resolve_object(objs, i):
 
 # pylint: disable=too-few-public-methods
 class ObjectClassDefinition:
-  ''' A representation of a "class" object, used in `resolve_object()`
-      for otherwise unrecognised objects which contain a `$classname` member.
-  '''
+  """A representation of a "class" object, used in `resolve_object()`
+  for otherwise unrecognised objects which contain a `$classname` member.
+  """
 
   def __init__(self, name, mro):
     self.name = name
@@ -303,9 +307,9 @@ class ObjectClassDefinition:
 
 
 class ObjectClassInstance:
-  ''' A representation of a "class instance", used in `resolve_object()`
-      for objects with a `$class` member.
-  '''
+  """A representation of a "class instance", used in `resolve_object()`
+  for objects with a `$class` member.
+  """
 
   def __init__(self, class_def, value):
     self.class_def = class_def
@@ -313,8 +317,8 @@ class ObjectClassInstance:
 
   @property
   def name(self):
-    ''' The name from teh class definiton.
-    '''
+    """The name from teh class definiton.
+    """
     return self.class_def.name
 
   def __str__(self):
