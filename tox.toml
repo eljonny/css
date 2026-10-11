@@ -48,6 +48,13 @@ commands = [
             ], extend=true}
     ],
     [
+        "ruff", "check",
+        {replace="posargs",default=[
+                "--config",
+                ".hsf-ruff-plist.toml"
+            ], extend=true}
+    ],
+    [
         "flake8"
     ]
 ]
