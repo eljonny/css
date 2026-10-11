@@ -51,6 +51,12 @@ extend-select = [
     "W", # warning
 ]
 ignore = [
+    "D203",  # D211 is incompatible with no-blank-line-before-class
+    "D213",  # D212 is incompatible with multi-line-summary-second-line
+    "D400",  # First line of a docstring should end with a period
+    "D415",  # First line of a docstring should end with punctuation
+    "N813",  # Casing of import name changed (ElementTree -> etree)
+    "TRY003" # Don't use custom exception messages (what on earth?)
 ]
 
 flake8-quotes.docstring-quotes = "single"
@@ -64,7 +70,8 @@ max-complexity = 15
 extend-ignore-names = [
     "setUp",
     "tearDown",
-    "test*"
+    "test*",
+    "*Plist"
 ]
 
 [lint.pylint]

@@ -1,8 +1,11 @@
+"""Unit tests module for the plist module"""
+
 import tempfile
 import unittest
 from fnmatch import fnmatch
 from os import close, unlink, walk
 from pathlib import Path
+from typing import ClassVar
 from xml.parsers.expat import ExpatError
 
 import pytest
@@ -11,21 +14,19 @@ from .plist import readPlist, writePlist
 
 
 class TestPlist(unittest.TestCase):
-  """Unit tests for: cs.app.osx.plist
-  """
+  """Unit test class for: cs.app.osx.plist"""
 
   file = Path(__file__).resolve()
-  TEST_DATA_DIR = f"{file.parents[5]}/libplist/test/data"
-  EXCLUDE_FILES = [
+  TEST_DATA_DIR = f"{file.parents[5]}/lib_plist/test/data"
+  EXCLUDE_FILES: ClassVar[list[str]] = [
     'invalid_tag.plist',
     'amp.plist',
-    'malformed_dict.bplist',
-    'recursion.bplist',
+    'malformed_dict.b_plist',
+    'recursion.b_plist',
   ]
 
   def setUp(self):
-    """Test setup.
-    """
+    """Test setup."""
     self.test_files_bin = []
     self.test_files_xml = []
     self.test_neg_bin = []
@@ -35,48 +36,60 @@ class TestPlist(unittest.TestCase):
         if filename not in self.EXCLUDE_FILES:
           if fnmatch(filename, "*.plist"):
             self.test_files_xml.append(f"{dirpath}/{filename}")
-          elif fnmatch(filename, "*.bplist"):
+          elif fnmatch(filename, "*.b_plist"):
             self.test_files_bin.append(f"{dirpath}/{filename}")
         elif fnmatch(filename, "*.plist"):
           self.test_neg_xml.append(f"{dirpath}/{filename}")
-        elif fnmatch(filename, "*.bplist"):
+        elif fnmatch(filename, "*.b_plist"):
           self.test_neg_bin.append(f"{dirpath}/{filename}")
       break
 
   def tearDown(self):
-    """Undo test setup.
-    """
+    """Undo test setup."""
 
   def testReadPlist(self):
-    for xmlPlist in self.test_files_xml:
-      readPlist(xmlPlist, binary=False)
-      readPlist(xmlPlist)
+    """Tests for the plist module readPlist function.
 
-    for bPlist in self.test_files_bin:
-      readPlist(bPlist, binary=True)
+    Verify that known-good plist files read without raising errors.
+    """
+    for xml_plist in self.test_files_xml:
+      readPlist(xml_plist, binary=False)
+      readPlist(xml_plist)
+
+    for b_plist in self.test_files_bin:
+      readPlist(b_plist, binary=True)
 
   def testBadReadPlist(self):
-    for xmlPlist in self.test_neg_xml:
-      if Path(xmlPlist).name in (
+    """Tests for the plist module readPlist function.
+
+    Verify that known-bad plist files raise errors when read.
+    """
+    for xml_plist in self.test_neg_xml:
+      if Path(xml_plist).name in (
           'invalid_tag.plist',
           'amp.plist'):
         with pytest.raises(ExpatError):
-          readPlist(xmlPlist)
+          readPlist(xml_plist)
       else:
-        readPlist(xmlPlist)
+        readPlist(xml_plist)
 
-    for bPlist in self.test_neg_bin:
-      if Path(bPlist).name in (
-          'malformed_dict.bplist',
-          'recursion.bplist'):
+    for b_plist in self.test_neg_bin:
+      if Path(b_plist).name in (
+          'malformed_dict.b_plist',
+          'recursion.b_plist'):
         with pytest.raises(AttributeError):
-          readPlist(bPlist, binary=True)
+          readPlist(b_plist, binary=True)
       else:
-        readPlist(bPlist, binary=True)
+        readPlist(b_plist, binary=True)
 
   def testWritePlist(self):
-    for xmlPlist in self.test_files_xml:
-      plist = readPlist(xmlPlist)
+    """Tests for the plist module writePlist function.
+
+    Verify that known-good plist files read then write without raising
+     errors.
+    """
+    for xml_plist in self.test_files_xml:
+      plist = readPlist(xml_plist)
 
       tfd, tpath = tempfile.mkstemp()
       close(tfd)

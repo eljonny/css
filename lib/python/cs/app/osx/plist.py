@@ -1,8 +1,10 @@
 #!/usr/bin/python
 #
 
-"""Some simple MacOS plist facilities.
-Supports binary plist files, which the stdlib `plistlib` module does not.
+"""Some simple Apple plist facilities.
+
+Supports binary plist files, which the stdlib `plistlib` module has
+issues with.
 """
 
 import base64
@@ -25,7 +27,8 @@ except ImportError:
 __version__ = '20260816'
 
 # Add flake8 fixes - easy fixes -
-# Convert to using libplist Cython bindings (2026-08-16) -
+# Convert readPlist and writePlist to using libplist Cython bindings
+#  (2026-08-16) -
 # Jonathan Hyry <jonathan.hyry@outlook.com> - 2026-03-29
 
 DISTINFO = {
@@ -43,6 +46,9 @@ DISTINFO = {
 
 def import_as_etree(plist):
   """Load an Apple plist and return an etree.Element.
+
+  .. ATTENTION::
+    This function depends on Apple `plutil` CLI utility.
 
   Paramaters:
   * `plist`: the source plist: data if `bytes`, filename if `str`,
@@ -62,23 +68,27 @@ def import_as_etree(plist):
       return import_as_etree(pfp)
   # presume plist is a file
   with subprocess.Popen(['plutil', '-convert', 'xml1', '-o', '-', '-'],
-                        stdin=plist, stdout=subprocess.PIPE) as P:
-    E = etree.parse(P.stdout)
-    retcode = P.wait()
+                        stdin=plist, stdout=subprocess.PIPE) \
+      as p_plutil:
+    plutil_stdout = etree.parse(p_plutil.stdout)
+    retcode = p_plutil.wait()
   if retcode != 0:
-    raise ValueError(
-      "export_xml_as_plist(E=%s,...): plutil exited with returncode=%s" %
-      (E, retcode)
-    )
-  return E
+    raise ValueError(' '.join([
+      f"export_xml_as_plist(E={plutil_stdout},...): plutil exited ",
+      f"with returncode={retcode}"
+    ]))
+  return plutil_stdout
 
 
-def ingest_plist(plist, recurse=False, resolve=False):
+def ingest_plist(plist, recurse=False, resolve=False):  # noqa: D417
   """Ingest an Apple plist and return as a `PListDict`.
+
   Trivial wrapper for `import_as_etree` and `ingest_plist_etree`.
 
   Parameters
   ----------
+  * `plist`: the source plist: data if `bytes`, filename if `str`,
+    otherwise a file object open for binary read.
   * `recurse`: unpack any `bytes` objects as plists
   * `resolve`: resolve unpacked `bytes` plists' `'$objects'` entries
 
@@ -98,47 +108,53 @@ def ingest_plist(plist, recurse=False, resolve=False):
     return pd
 
 
-def export_xml_to_plist(E, fp=None, fmt='binary1'):
+def export_xml_to_plist(e_tree, fp=None, fmt='binary1'):  # noqa: D417
   """Export the content of an `etree.Element` to a plist file.
+
+  .. ATTENTION::
+    This function depends on Apple `plutil` CLI utility.
 
   Parameters
   ----------
-  * `E`: the source `etree.Element`.
+  * `e_tree`: the source `etree.Element`.
   * `fp`: the output file or filename (if a str).
   * `fmt`: the output format, default `"binary1"`.
-    The format must be a valid value for the `-convert` option of plutil(1).
+    The format must be a valid value for the `-convert` option of
+    plutil(1).
 
   """
   if isinstance(fp, str):
     with open(fp, "wb") as ofp:
-      return export_xml_to_plist(E, ofp, fmt=fmt)
+      return export_xml_to_plist(e_tree, ofp, fmt=fmt)
   with subprocess.Popen(['plutil', '-convert', fmt, '-o', '-', '-'],
-                        stdin=subprocess.PIPE, stdout=fp) as P:
-    P.stdin.write(etree.tostring(E))
-    P.stdin.close()
-    retcode = P.wait()
+                        stdin=subprocess.PIPE, stdout=fp) as p_plutil:
+    p_plutil.stdin.write(etree.tostring(e_tree))
+    p_plutil.stdin.close()
+    retcode = p_plutil.wait()
   if retcode != 0:
-    raise ValueError(
-      "export_xml_as_plist(E=%s,...): plutil exited with returncode=%s" %
-      (E, retcode)
-    )
+    raise ValueError(' '.join([
+      f"export_xml_as_plist(E={e_tree},...): plutil exited with ",
+      f"returncode={retcode}"
+    ]))
   return None
 
 
 def ingest_plist_etree(plist_etree):
-  """Recursively a plist's `ElementTree` into a native Python structure.
+  """Recursively load a plist's `ElementTree` into a Python structure.
+
   This returns a `PListDict`, a mapping of the plists's top dict
   with attribute access to key values.
   """
   root = plist_etree.getroot()
   if root.tag != 'plist':
-    raise ValueError("%r root Element is not a plist" % (root,))
+    raise ValueError(f"{root} root Element is not a plist")
   return ingest_plist_dict(root[0])
 
 
 # pylint: disable=too-many-return-statements
-def ingest_plist_elem(e):
-  """Ingest a plist `Element`, converting various types to native Python objects.
+def ingest_plist_elem(e):  # noqa: PLR0911
+  """Ingest a plist `Element`, converting types to Python objects.
+
   Unhandled types remain as the original `Element`.
   """
   if e.tag == 'dict':
@@ -158,29 +174,27 @@ def ingest_plist_elem(e):
   if e.tag == 'data':
     return base64.b64decode(e.text)
   if e.tag == 'date':
-    dt = datetime.strptime(e.text, '%Y-%m-%dT%H:%M:%SZ')
+    dt = datetime.strptime(e.text, '%Y-%m-%dT%H:%M:%SZ')  # noqa: DTZ007
     dt = datetime.combine(dt.date(), dt.time(), timezone.utc)
     return dt
   return e
 
 
 def ingest_plist_array(pa):
-  """Ingest a plist <array>, returning a Python list.
-  """
+  """Ingest a plist <array>, returning a Python list."""
   if pa.tag != 'array':
-    raise ValueError("not an <array>: %r" % (pa,))
+    raise ValueError(f"not an <array>: {pa}")
   a = []
   for i, e in enumerate(pa):
-    e = pa[i]
-    a.append(ingest_plist_elem(e))
+    e_i_obj = e
+    a.append(ingest_plist_elem(e_i_obj))
   return a
 
 
 def ingest_plist_dict(pd):
-  """Ingest a plist <dict> Element, returning a PListDict.
-  """
+  """Ingest a plist <dict> Element, returning a PListDict."""
   if pd.tag != 'dict':
-    raise ValueError("not a <dict>: %r" % (pd,))
+    raise ValueError(f"not a <dict>: {pd}")
   d = PListDict()
   key = None
   for i, e in enumerate(pd):
@@ -188,23 +202,24 @@ def ingest_plist_dict(pd):
       if e.tag == 'key':
         key = e.text
       else:
-        raise ValueError("unexpected key element %r" % (e,))
+        raise ValueError(f"unexpected key element {e}")
     else:
       value = ingest_plist_elem(e)
       d[key] = value
       key = None
   if key is not None:
-    raise ValueError("no value for key %r" % (key,))
+    raise ValueError(f"no value for key {key}")
   return d
 
 
 class PListDict(dict):
-  """A mapping for a plist, subclassing `dict`, which also allows
-  access to the elements by attribute if that does not conflict
-  with a `dict` method.
+  """A mapping for a plist.
+
+  Subclassing `dict`, which also allows access to the elements by
+  attribute if that does not conflict with a `dict` method.
   """
 
-  def __getattr__(self, attr):
+  def __getattr__(self, attr):  # noqa: D105
     if attr[0].isalpha():
       try:
         return self[attr]
@@ -213,7 +228,7 @@ class PListDict(dict):
         raise AttributeError(attr)
     raise AttributeError(attr)
 
-  def __setattr__(self, attr, value):
+  def __setattr__(self, attr, value):  # noqa: D105
     if attr in self:
       self[attr] = value
     else:
@@ -221,12 +236,17 @@ class PListDict(dict):
 
 
 # pylint: disable=too-many-statements.too-many-branches,too-many-nested-blocks,too-many-locals
-def resolve_object(objs, i):
-  """Resolve an object definition from structures like an iPhoto album
-  queryData object list.
+def resolve_object(objs, i):  # noqa: C901,PLR0912,PLR0915
+  """Resolve an object definition from structures.
+
+  Structures like an iPhoto album queryData object list.
   """
   o = objs[i]
-  if isinstance(o, (str, int, bool, float, ObjectClassDefinition, ObjectClassInstance)):
+  if isinstance(o, (
+      str, int, bool, float,
+      ObjectClassDefinition,
+      ObjectClassInstance)
+  ):
     return o
   if isinstance(o, PListDict):
     if '$class' in o:
@@ -241,14 +261,14 @@ def resolve_object(objs, i):
         for od in o.pop('NS.objects'):
           obj_id = od.pop('CF$UID')
           if od:
-            raise ValueError("other fields in obj ref: %r" % (od,))
+            raise ValueError(f"other fields in obj ref: {od}")
           objects.append(resolve_object(objs, obj_id))
         if 'NS.keys' in o:
           keys = []
           for kd in o.pop('NS.keys'):
             key_id = kd.pop('CF$UID')
             if kd:
-              raise ValueError("other fields in key ref: %r" % (kd,))
+              raise ValueError(f"other fields in key ref: {kd}")
             key = resolve_object(objs, key_id)
             keys.append(key)
           value = dict(zip(keys, objects))
@@ -264,108 +284,147 @@ def resolve_object(objs, i):
         data = o['NSRangeData']
         key_id = data.pop('CF$UID')
         if data:
-          raise ValueError("other fields in NSRangeData: %r" % (data,))
+          raise ValueError(f"other fields in NSRangeData: {data}")
         data = resolve_object(objs, key_id)
         value = {'NSRangeCount': count, 'NSRangeData': data}
       elif 'data' in o:
         data = o['data']
         key_id = data.pop('CF$UID')
         if data:
-          raise ValueError("other fields in data: %r" % (data,))
+          raise ValueError(f"other fields in data: {data}")
         data = resolve_object(objs, key_id)
         o['data'] = data
         value = data
       else:
-        warning("unhandled $class instance: %r", o)
+        warning(f"unhandled $class instance: {o}")
       o = ObjectClassInstance(class_def, value)
     elif '$classname' in o:
       class_name = o.pop('$classname')
       class_mro = o.pop('$classes')
       o = ObjectClassDefinition(class_name, class_mro)
     else:
-      warning("unknown dict content: %r" % (o,))
+      warning(f"unknown dict content: {o}")
   else:
-    warning("unsupported value %r" % (o,))
+    warning(f"unsupported value {o}")
   objs[i] = o
   return o
 
 
 # pylint: disable=too-few-public-methods
 class ObjectClassDefinition:
-  """A representation of a "class" object, used in `resolve_object()`
-  for otherwise unrecognised objects which contain a `$classname` member.
+  """A representation of a "class" object
+
+  Used in `resolve_object()` for otherwise unrecognised objects which
+  contain a `$classname` member.
   """
 
-  def __init__(self, name, mro):
+  def __init__(self, name, mro):  # noqa: D107
     self.name = name
     self.mro = mro
 
-  def __str__(self):
-    return "%s%r" % (self.name, self.mro)
+  def __str__(self):  # noqa: D105
+    return f"{self.name}{self.mro}"
 
   __repr__ = __str__
 
 
 class ObjectClassInstance:
-  """A representation of a "class instance", used in `resolve_object()`
-  for objects with a `$class` member.
+  """A representation of a "class instance"
+
+  Used in `resolve_object()` for objects with a `$class` member.
   """
 
-  def __init__(self, class_def, value):
+  def __init__(self, class_def, value):  # noqa: D107
     self.class_def = class_def
     self.value = value
 
   @property
   def name(self):
-    """The name from teh class definiton.
-    """
+    """The name from teh class definiton."""
     return self.class_def.name
 
-  def __str__(self):
-    return "%s%r" % (self.name, self.value)
+  def __str__(self):  # noqa: D105
+    return f"{self.name}{self.value}"
 
   __repr__ = __str__
 
-  def __len__(self):
+  def __len__(self):  # noqa: D105
     return len(self.value)
 
-  def __getitem__(self, key):
+  def __getitem__(self, key):  # noqa: D105
     return self.value[key]
 
-  def __setitem__(self, key, value):
+  def __setitem__(self, key, value):  # noqa: D105
     self.value[key] = value
 
-  def __contains__(self, key):
+  def __contains__(self, key):  # noqa: D105
     return key in self.value
 
-  def __getattr__(self, attr):
+  def __getattr__(self, attr):  # noqa: D105
     try:
       return self.value[attr]
     except KeyError:
       # pylint: disable=raise-missing-from
-      raise AttributeError("not in self.value: %r" % (attr,))
+      raise AttributeError(f"not in self.value: {attr}")
     except TypeError:
       # pylint: disable=raise-missing-from
-      raise AttributeError("cannot index self.value: %r" % (attr,))
+      raise AttributeError(f"cannot index self.value: {attr}")
     raise AttributeError(attr)
 
   # pylint: disable=missing-function-docstring
-  def keys(self):
+  def keys(self):  # noqa: D102
     return self.value.keys()
 
   # pylint: disable=missing-function-docstring
-  def items(self):
+  def items(self):  # noqa: D102
     return self.value.items()
 
   # pylint: disable=missing-function-docstring
-  def values(self):
+  def values(self):  # noqa: D102
     return self.value.values()
 
 
-def readPlist(path, binary=False):
+def readPlist(path, binary=False, force_libplist=False):
+  """Read a plist from a file path into a stdlib plistlib object.
+
+  This function reads a plist from a file path using stdlib plistlib
+  for XML plists (by default) and libimobiledevice's libplist for
+  binary plists, and should work with any known-valid Apple plist.
+  Optionally, you can force it to use libplist if plistlib is not
+  working correctly, as libplist supports Apple plist constructs that
+  sometimes do not work with Expat.
+
+  Args:
+      path (str):
+        A file system path to a file with well-formed plist data.
+      binary (bool, optional):
+        This tells the parser to interpret the plist as a binary plist.
+        Forces usage of libplist because plistlib has issues with
+        binary plists; in the Python stdlib documentation, support
+        appears to be in Python versions as old as 3.4, but real-world
+        support for data is unknown.
+        Defaults to False.
+      force_libplist (bool, optional):
+        Forces reading plist data from the specified file using
+        libplist, even if it is an XML plist.
+        Defaults to False.
+
+  Returns:
+      Dynamic:
+        In almost all cases, the underlying parsers appear to return a
+        dictionary.
+        It is a possibility it may be some sort of other value type, so
+        make sure to take that into account.
+        Unknown if this can return None; it would be good to ensure you
+        handle the case that it does just in case.
+
+  """
   if not binary:
-    with open(path) as path_file:
-      return plistlib.loads(path_file.read(), fmt=plistlib.FMT_XML)
+    with open(path, 'rb') as path_file:
+      if force_libplist:
+        return load(path_file, fmt=FMT_XML)
+      else:
+        return plistlib.loads(path_file.read(), fmt=plistlib.FMT_XML)
 
   tfd, tpath = tempfile.mkstemp()
   os.close(tfd)
@@ -375,7 +434,7 @@ def readPlist(path, binary=False):
     with open(tpath, 'w') as plist_out_fp:
       dump(plist, plist_out_fp, fmt=FMT_XML)
 
-  with open(tpath) as xmlplist:
+  with open(tpath, 'rb') as xmlplist:
     pl = plistlib.loads(xmlplist.read(), fmt=plistlib.FMT_XML)
 
   os.unlink(tpath)
@@ -383,16 +442,44 @@ def readPlist(path, binary=False):
   return pl
 
 
-def writePlist(rootObj, path, binary=False):
+def writePlist(root_obj, path, binary=False, force_libplist=False):
+  """Write a plist as XML or binary to a valid, writable file location.
+
+  Args:
+      root_obj (dictionary):
+        The root of the plist object to write.
+      path (str):
+        A file system path to a file where well-formed plist data will
+        be written.
+      binary (bool, optional):
+        This tells the parser to write the plist in binary plist
+        format.
+        Forces usage of libplist because plistlib has issues with
+        binary plists; in the Python stdlib documentation, support
+        appears to be in Python versions as old as 3.4, but real-world
+        support for data is unknown.
+        Defaults to False.
+      force_libplist (bool, optional):
+        Forces writing plist data to the specified file using libplist,
+        even if the output plist format is XML.
+        Defaults to False.
+
+  Returns:
+      None: Does not return anything.
+
+  """
   if not binary:
     with open(path, 'wb') as path_file:
-      return plistlib.dump(rootObj, path_file, fmt=plistlib.FMT_XML)
+      if force_libplist:
+        dump(root_obj, path_file, fmt=FMT_XML)
+      else:
+        plistlib.dump(root_obj, path_file, fmt=plistlib.FMT_XML)
 
   tfd, tpath = tempfile.mkstemp()
   os.close(tfd)
 
   with open(tpath, 'wb') as tpath_file:
-    plistlib.dump(rootObj, tpath_file, fmt=plistlib.FMT_XML)
+    plistlib.dump(root_obj, tpath_file, fmt=plistlib.FMT_XML)
 
   with open(tpath, 'rb') as written_plist:
     plist = loads(written_plist.read(), fmt=FMT_XML)
