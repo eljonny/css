@@ -66,12 +66,12 @@ Docs = "http://www.cskk.ezoshosting.com/cs/css/"
 Manual = "http://www.cskk.ezoshosting.com/cs/man/"
 BitBucket = "https://bitbucket.org/cameron_simpson/css/"
 Website = "http://www.cskk.ezoshosting.com/cs/"
-# Cameron's GitHub Source Repository - upstream-upstream
+# Cameron's GitHub Source Repository - collab-upstream
 GitHub = "https://github.com/cameron-simpson/css"
-# Mirror upstream-upstream to sync HSF Working with - upstream
+# Mirror upstream to sync HSF Working with - upstream
 HSFGiteaUpstream = "https://git.hyrysoftwarefoundation.org/jhyry87/css"
-# For contributing to upstream-upstream - origin-collab
-HSFGitHubUpstream = "https://github.com/eljonny/css"
+# For contributing to collab-upstream - origin-collab
+HSFGitHub = "https://github.com/eljonny/css"
 # HSF Working Repo - Packaging and working on cs.app.osx.plist - origin
 HSFGitea = "https://git.hyrysoftwarefoundation.org/HyrySoftwareFoundation/css"
 # HSF Working - PyPI Package Registry

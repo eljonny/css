@@ -84,7 +84,7 @@ pyproject-api==1.10.0
 pyproject_hooks==1.2.0
 pytest==9.0.2
 python-dateutil==2.9.0.post0
-python-discovery==1.2.2
+python-discovery==1.6.2
 railroad-diagrams==3.0.1
 readme_renderer==44.0
 requests==2.32.5
@@ -103,7 +103,7 @@ tkmacosx==1.0.5
 tokenize_rt==6.2.0
 tomli_w==1.2.0
 tomlkit==0.14.0
-tox==4.53.0
+tox==4.65.3
 trove-classifiers==2026.1.14.14
 twine==6.2.0
 typeguard==4.5.1
