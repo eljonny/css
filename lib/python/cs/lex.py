@@ -69,7 +69,6 @@ from cs.seq import (
 __version__ = '20261016-post'
 
 DISTINFO = {
-==== BASE ====
     'keywords': ["python3"],
     'classifiers': [
         "Programming Language :: Python",
@@ -89,7 +88,6 @@ DISTINFO = {
         'icontract',
         'typeguard',
     ],
-==== BASE ====
 }
 
 unhexify = binascii.unhexlify  # pylint: disable=c-extension-no-member
